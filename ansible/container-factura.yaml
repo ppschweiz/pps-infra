@@ -17,5 +17,6 @@
            TESTBOX_NAME="Lukas Rageth"
            TESTBOX_MAIL="lukas@rageth.li"
            ADMIN_MAIL_ADDRESS="lukas@rageth.li"
+           STATS_MAIL_ADDRESS="vorstand@piratenpartei.ch"
            PAYLINK_BASE="https://www.piratenpartei.ch"
            PAYLINK_SECRET="{{ lookup('hashi_vault', 'secret=secret/factura/PAYLINK_SECRET:value') }}"
