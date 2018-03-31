@@ -12,5 +12,5 @@
            AWS_SECRET_ACCESS_KEY="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-secret-access-key:value') }}"
            PASSPHRASE="{{ lookup('hashi_vault', 'secret=secret/duplicity/passphrase:value') }}"
            SOURCE_PATH="/data"
-           REMOTE_URL="s3://sos.exo.io/pps-backup"
+           REMOTE_URL="s3://sos-ch-dk-2.exo.io/pps-backup"
            PARAMS="--exclude /data/mysql --exclude /data/migration --exclude /data/migration-mysql"
