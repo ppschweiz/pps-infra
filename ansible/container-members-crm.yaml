@@ -30,7 +30,7 @@
 
      - name: start civicrm container
        docker_container:
-         image: ppschweiz/wordpress
+         image: wordpress:php7.1
          name: "members-crm"
          restart_policy: always
          labels:
@@ -49,7 +49,7 @@
 
      - name: start civicrm croncontainer
        docker_container:
-         image: ppschweiz/wordpress
+         image: wordpress:php7.1
          name: "members-crm-cron"
          state: started
          pull: True
