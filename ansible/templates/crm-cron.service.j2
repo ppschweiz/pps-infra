@@ -1,0 +1,6 @@
+[Unit]
+Description=Run {{ name }} cronjob
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker exec -u www-data {{ name }} sh -c '/usr/local/bin/wp --user=admin --url=https://members-crm.piratenpartei.ch --path=/var/www/html/ civicrm api job.execute auth=0'

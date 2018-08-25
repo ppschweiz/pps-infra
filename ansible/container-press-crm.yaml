@@ -47,23 +47,26 @@
            WORDPRESS_DB_USER="press-crm"
            WORDPRESS_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
 
-     - name: start civicrm croncontainer
-       docker_container:
-         image: wordpress:php7.1
-         name: "press-crm-cron"
+     - name: cronjob for civirm
+       become: true
+       set_fact:
+         name: "press-crm"
+       template:
+         src: templates/crm-cron.service.j2
+         dest: "/etc/systemd/system/{{ name }}-cron.service"
+
+     - name: cronjob for civirm
+       become: true
+       template:
+         src: templates/crm-cron.timer.j2
+         dest: "/etc/systemd/system/{{ name }}-cron.timer"
+
+     - name: start timer for cronjob
+       systemd:
+         daemon_reload: yes
+         enabled: True
+         name: "{{ name }}-cron.timer"
          state: started
-         pull: True
-         restart_policy: always
-         links:
-           - press-crm-mysql:mysql
-           - press-crm-mysql-civi:mysql-civi
-         volumes:
-           - /data/files/press-crm/:/var/www/html
-         command: /var/www/html/startjobs.sh
-         env:
-           WORDPRESS_DB_NAME="press-crm"
-           WORDPRESS_DB_USER="press-crm"
-           WORDPRESS_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
 
      - name: start backup container for first mysql container
        docker_container:
