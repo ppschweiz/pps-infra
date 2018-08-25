@@ -1,6 +1,6 @@
 [Unit]
 Description=Run {{ name }} cronjob every 5 minutes
-Wants=civi-crm-cron.service
+Wants={{ name }}-cron.service
 
 [Timer]
 OnCalendar=*:0/5
