@@ -10,13 +10,13 @@
          env:
            MYSQL_RANDOM_ROOT_PASSWORD="true"
            MYSQL_ONETIME_PASSWORD="true"
-           MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
+           MYSQL_PASSWORD="test"
            MYSQL_USER="projects"
            MYSQL_DATABASE="projects"
 
      - name: start projects/redmine container
        docker_container:
-         image: ppschweiz/redmine
+         image: ppschweiz/redmine:v3.3.7
          name: "projects"
          restart_policy: always
          labels:
@@ -30,7 +30,7 @@
          env:
            DB_HOST="mysql"
            DB_USER="projects"
-           DB_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
+           DB_PASS="test"
            DB_NAME="projects"
            DB_TYPE="mysql"
            REDMINE_HTTPS="true"
@@ -52,5 +52,5 @@
          volumes:
            - /data/mysql-backup/projects/:/backup
          env:
-           MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
+           MYSQL_PASS="test"
            MAX_BACKUPS=3
