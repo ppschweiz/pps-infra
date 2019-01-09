@@ -13,3 +13,7 @@
       authorized_key:
         key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDCPA+PFV1AxwI6O0ZI3Mc4jSmTUO+ze/I8OVFSxPnw2JZjQhg9Exu0W2Fs30LboHsFrvZv95XkBhykwJMqSlSzNBUmB/8yoGYBkWG3VY8ZSSkbDfd420wBIfbRKH7iyGI7VMXE5jSWJ5/25PHfV8KdhT0PTh/gkbJvoT8EjZaVnvS/gMZtkvxpq78QrjXihQC7z7HIH2GuPtyWAGavNrRioB4mGiWni/RKUmpvPOoPdoHX/TNLWNObG16KNIce0xevDCf0fby439L1/vyoYjlFMachLszXjfBdCwy4lYLaWAq3G4xmuBkGk3eqksT8zrSb9KNfJ57GP3dJPJCz7UFh'
         user: core
+    - name: deploy public key J0WI
+      authorized_key:
+        key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILKISI55eX0kPjM3CnMAJd8eeS5omqaC5WKLFEKikWZC'
+        user: core
