@@ -9,6 +9,13 @@
     restart_policy: always
     name: "traefik"
     ports: "80:80,443:443"
+    lables:
+      - {headers.SSLRedirect, true}
+      - {headers.STSSeconds, 315360000}
+      - {headers.browserXSSFilter, true}
+      - {headers.contentTypeNosniff, true}
+      - {headers.forceSTSHeader, true}
+      - {headers.frameDeny, true}
     state: started
     command: --web --docker --docker.domain=piratenpartei.ch --logLevel=DEBUG
     volumes:
