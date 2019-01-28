@@ -1,4 +1,5 @@
 defaultEntryPoints = ["http", "https"]
+logLevel = "ERROR"
 [entryPoints]
   [entryPoints.http]
   address = ":80"
