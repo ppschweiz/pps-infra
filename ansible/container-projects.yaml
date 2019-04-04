@@ -14,6 +14,12 @@
            MYSQL_USER="projects"
            MYSQL_DATABASE="projects"
 
+     - name: Redmine mail config
+       become: true
+       template:
+         src: templates/redmine.yml
+         dest: /data/files/projects/configuration.yml
+
      - name: start projects/redmine container
        docker_container:
          image: ppschweiz/redmine
