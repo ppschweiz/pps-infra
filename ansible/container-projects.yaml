@@ -40,7 +40,7 @@
            REDMINE_DB_DATABASE="projects"
            REDMINE_DB_MYSQL="mysql"
            REDMINE_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
-           REDMINE_DB_USERNAME="redmine"
+           REDMINE_DB_USERNAME="projects"
            REDMINE_PLUGINS_MIGRATE=true
 
      - name: start backup container for first mysql container
