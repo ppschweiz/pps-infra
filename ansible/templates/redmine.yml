@@ -1,9 +1,0 @@
-production:
-  delivery_method: :smtp
-  smtp_settings:
-    address: smtprelay.piratenpartei.ch
-    port: 587
-    domain: piratenpartei.ch
-    authentication: :login
-    user_name: info@piratenpartei.ch
-    password: {{ lookup('hashi_vault', 'secret=secret/projects/smtprelay/password:value') }}

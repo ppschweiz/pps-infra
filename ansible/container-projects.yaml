@@ -16,8 +16,8 @@
 
      - name: Redmine mail config
        become: true
-       template:
-         src: templates/redmine.yml
+       copy:
+         src: files/redmine.yml
          dest: /data/files/projects/configuration.yml
 
      - name: start projects/redmine container
