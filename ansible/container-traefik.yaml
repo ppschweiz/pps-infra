@@ -5,8 +5,9 @@
     dest: /etc/traefik.toml
 - name: Traefik
   docker_container:
-    image: "traefik"
+    image: "traefik:maroilles"
     restart_policy: always
+    pull: True
     name: "traefik"
     ports: "80:80,443:443"
     state: started
