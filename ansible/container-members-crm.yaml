@@ -49,7 +49,7 @@
 
      - name: start civicrm croncontainer
        docker_container:
-         image: wordpress:php7.1
+         image: wordpress:cli
          name: "members-crm-cron"
          state: started
          pull: True
