@@ -5,10 +5,18 @@
   roles:
     - vmware.ansible-coreos-bootstrap
   tasks:
-    - name: Install docker-py
+
+    - name: uninstall docker-py
       pip:
         name: docker-py
+        state: absent
         executable: /home/core/bin/pip
+
+    - name: Install docker
+      pip:
+        name: docker
+        executable: /home/core/bin/pip
+
   vars:
-    - coreos_pypy_version: "5.7.1"
-    - coreos_pypy_sha256: "8a6a194963eb58d582413c4bcdef6119f9f9f117a05032d1fb13192d934510c6"
+    - coreos_pypy_version: "7.1.1"
+    - coreos_pypy_sha256: "d0b226d2dd656c622cee4e3e982225e1b346653823b49f736d8b0ddc06fd0c73"
