@@ -60,6 +60,7 @@
          volumes:
            - /data/files/press-crm/:/var/www/html
          command: /var/www/html/startjobs.sh
+         user: 33
          env:
            WORDPRESS_DB_NAME="press-crm"
            WORDPRESS_DB_USER="press-crm"
