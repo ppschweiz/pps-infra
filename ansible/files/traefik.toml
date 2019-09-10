@@ -19,3 +19,6 @@ onHostRule = true
 
 [[acme.domains]]
    main = "traefik.piratenpartei.ch"
+
+[acme.httpChallenge]
+  entryPoint = "http"
