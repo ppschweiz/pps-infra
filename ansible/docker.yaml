@@ -17,3 +17,4 @@
     - include: container-backup.yaml
     - include: container-projects.yaml
     - include: container-otrs.yaml
+    - include: container-nextcloud.yaml
