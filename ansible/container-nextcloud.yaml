@@ -17,7 +17,7 @@
 - name: start redis container
   docker_container:
     image: "redis:alpine"
-    name: "redis"
+    name: "nextcloud-redis"
     state: started
     pull: True
     restart_policy: always
@@ -85,7 +85,7 @@
     restart_policy: always
     pull: True
     links:
-      - nexcloud-mysql:mysql
+      - nextcloud-mysql:mysql
     volumes:
       - /data/mysql-backup/nextcloud:/backup
     env:
