@@ -85,7 +85,7 @@
     restart_policy: always
     pull: True
     links:
-      - nexcloud-mysql:mysql
+      - nextcloud-mysql:mysql
     volumes:
       - /data/mysql-backup/nextcloud:/backup
     env:
