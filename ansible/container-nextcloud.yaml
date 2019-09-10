@@ -87,7 +87,7 @@
     links:
       - nexcloud-mysql:mysql
     volumes:
-      - /data/mysql-backup/nexcloud:/backup
+      - /data/mysql-backup/nextcloud:/backup
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
       MAX_BACKUPS=3
