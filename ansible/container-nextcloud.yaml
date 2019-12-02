@@ -24,7 +24,7 @@
 
 - name: start nextcloud container
   docker_container:
-    image: "nextcloud:16-apache"
+    image: "nextcloud:17-apache"
     name: "nextcloud"
     state: started
     pull: True
@@ -51,7 +51,7 @@
 
 - name: start nextcloud cron container
   docker_container:
-    image: "nextcloud:16-apache"
+    image: "nextcloud:17-apache"
     name: "nextcloud-cron"
     entrypoint: /cron.sh
     state: started
