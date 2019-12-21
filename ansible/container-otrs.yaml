@@ -83,3 +83,4 @@
            MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/otrs/mysql/password:value') }}"
            MAX_BACKUPS=3
            COMPRESS=y
+           EXTRA_OPTS="--max_allowed_packet=32M"
