@@ -1,6 +1,6 @@
      - name: start mysql container
        docker_container:
-         image: "mysql:5"
+         image: "mariadb:10.4"
          name: "members-crm-mysql"
          state: started
          restart_policy: always
@@ -15,7 +15,7 @@
 
      - name: start second mysql container
        docker_container:
-         image: "mysql:5"
+         image: "mariadb:10.4"
          name: "members-crm-mysql-civi"
          state: started
          pull: True
