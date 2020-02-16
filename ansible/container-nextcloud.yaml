@@ -26,6 +26,9 @@
   docker_container:
     image: "nextcloud:17-apache"
     name: "nextcloud"
+    labels:
+     "traefik.enable": "true"
+     "traefik.frontend.rule": "Host:cloud.piratenpartei.ch"
     state: started
     pull: True
     restart_policy: always
