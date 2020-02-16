@@ -16,3 +16,5 @@
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/traefik.toml:/traefik.toml
       - /var/lib/traefik:/var/lib/traefik
+    env:
+      GODEBUG=tls13=1
