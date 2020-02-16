@@ -27,7 +27,8 @@
          links:
            - mumble-mysql:mysql
          volumes:
-           - /home/core/hack/mumble:/tls
+           - /home/core/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro
+           - /home/core/ssl/private/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
          published_ports:
            - 64738:64738
            - 64738:64738/udp
