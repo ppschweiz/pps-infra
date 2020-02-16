@@ -3,6 +3,7 @@
   copy:
     src: files/traefik.toml
     dest: /etc/traefik.toml
+
 - name: Traefik
   docker_container:
     image: "traefik:maroilles"
@@ -11,7 +12,6 @@
     name: "traefik"
     ports: "80:80,443:443"
     state: started
-    command: --web --docker --docker.domain=piratenpartei.ch
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/traefik.toml:/traefik.toml
