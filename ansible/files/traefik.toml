@@ -24,5 +24,10 @@ entryPoint = "https"
 acmeLogging = true
 onHostRule = true
 
+[[acme.domains]]
+  main = "traefik.piratenpartei.ch"
+[[acme.domains]]
+  main = "talk.piratenpartei.ch"
+
 [acme.httpChallenge]
   entryPoint = "http"
