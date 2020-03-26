@@ -43,31 +43,6 @@
            GPG_PWD_EEC960A4="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/EEC960A4:password') }}"
            GPG_PWD_B2C7B0F5="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/B2C7B0F5:password') }}"
 
-     - name: start otrs-cron container
-       docker_container:
-         image: ppschweiz/otrs
-         name: "otrs-cron"
-         restart_policy: always
-         auto_remove: True
-         state: started
-         pull: True
-         links:
-           - otrs-mysql:mysql
-         volumes:
-           - /data/files/otrs/gnupg/:/opt/otrs/.gnupg/
-           - /data/files/otrs/article/:/opt/otrs/var/article/
-         command: /otrscron.sh
-         env:
-           MYSQL_PORT_3306_TCP_ADDR="mysql"
-           MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/otrs/mysql/password:value') }}"
-           MYSQL_USER="otrs"
-           MYSQL_DATABASE="otrs"
-           SMTP_PORT_25_TCP_ADDR="mail-1-p.piratenpartei.ch"
-           GPG_PWD_D4CE5C2B="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/D4CE5C2B:password') }}"
-           GPG_PWD_50D7E35A="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/50D7E35A:password') }}"
-           GPG_PWD_EEC960A4="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/EEC960A4:password') }}"
-           GPG_PWD_B2C7B0F5="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/B2C7B0F5:password') }}"
-
      - name: start backup container for first mysql container
        docker_container:
          image: yloeffler/mysql-backup
