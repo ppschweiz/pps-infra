@@ -10,7 +10,6 @@
     - include: container-api.yaml
     - include: container-press-crm.yaml
     - include: container-members-crm.yaml
-    - include: container-beo.yaml
     - include: container-mumble.yaml
     - include: container-factura.yaml
     - include: container-mail.yaml
