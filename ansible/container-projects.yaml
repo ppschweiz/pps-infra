@@ -1,6 +1,6 @@
      - name: start mysql container
        docker_container:
-         image: "mysql:5"
+         image: "mariadb:10.4"
          name: "projects-mysql"
          state: started
          restart_policy: always
@@ -14,6 +14,12 @@
            MYSQL_USER="projects"
            MYSQL_DATABASE="projects"
 
+     - name: Redmine mail config
+       become: true
+       copy:
+         src: files/redmine.yml
+         dest: /data/files/projects/configuration.yml
+
      - name: start projects/redmine container
        docker_container:
          image: ppschweiz/redmine
@@ -26,19 +32,16 @@
          links:
            - projects-mysql:mysql
          volumes:
-           - /data/files/projects/:/home/redmine/data/
+           - /data/files/projects/configuration.yml:/usr/src/redmine/config/configuration.yml:ro
+           - /data/files/projects/files:/usr/src/redmine/files
+           - /data/files/projects/plugins:/usr/src/redmine/plugins:ro
+           - /data/files/projects/themes/PurpleMine2:/usr/src/redmine/public/themes/PurpleMine2:ro
          env:
-           DB_HOST="mysql"
-           DB_USER="projects"
-           DB_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
-           DB_NAME="projects"
-           DB_TYPE="mysql"
-           REDMINE_HTTPS="true"
-           REDMINE_ATTACHMENTS_DIR="/home/redmine/data/files"
-           NGINX_MAX_UPLOAD_SIZE="1024m"
-           SMTP_HOST="smtprelay.piratenpartei.ch"
-           SMTP_PORT="25"
-           SMTP_ENABLED="true"
+           REDMINE_DB_DATABASE="projects"
+           REDMINE_DB_MYSQL="mysql"
+           REDMINE_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
+           REDMINE_DB_USERNAME="projects"
+           REDMINE_PLUGINS_MIGRATE=true
 
      - name: start backup container for first mysql container
        docker_container:
