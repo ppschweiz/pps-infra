@@ -1,6 +1,6 @@
      - name: start mysql container
        docker_container:
-         image: "mysql:5"
+         image: "mariadb:10.4"
          name: "projects-mysql"
          state: started
          restart_policy: always
@@ -35,7 +35,7 @@
            - /data/files/projects/configuration.yml:/usr/src/redmine/config/configuration.yml:ro
            - /data/files/projects/files:/usr/src/redmine/files
            - /data/files/projects/plugins:/usr/src/redmine/plugins:ro
-           - /data/files/projects/themes:/usr/src/redmine/themes:ro
+           - /data/files/projects/themes/PurpleMine2:/usr/src/redmine/public/themes/PurpleMine2:ro
          env:
            REDMINE_DB_DATABASE="projects"
            REDMINE_DB_MYSQL="mysql"
