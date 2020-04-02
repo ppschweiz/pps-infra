@@ -20,7 +20,6 @@
          image: ppschweiz/otrs
          name: "otrs"
          restart_policy: always
-         auto_remove: True
          labels:
           "traefik.enable": "true"
           "traefik.frontend.rule": "Host:info.piratenpartei.ch"
