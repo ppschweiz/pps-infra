@@ -34,7 +34,6 @@
          volumes:
            - /data/files/projects/configuration.yml:/usr/src/redmine/config/configuration.yml:ro
            - /data/files/projects/files:/usr/src/redmine/files
-           - /data/files/projects/plugins:/usr/src/redmine/plugins:ro
            - /data/files/projects/themes/PurpleMine2:/usr/src/redmine/public/themes/PurpleMine2:ro
          env:
            REDMINE_DB_DATABASE="projects"
