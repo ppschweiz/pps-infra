@@ -1,13 +1,12 @@
      - name: start mysql container
        docker_container:
-         image: "mysql:5"
+         image: "mariadb:10.4"
          name: "mumble-mysql"
          state: started
          restart_policy: always
          pull: True
          volumes:
            - /data/mysql/mumble:/var/lib/mysql
-           - /data/mysql/mumble-initdb:/docker-entrypoint-initdb.d
          env:
            MYSQL_RANDOM_ROOT_PASSWORD="true"
            MYSQL_ONETIME_PASSWORD="true"
