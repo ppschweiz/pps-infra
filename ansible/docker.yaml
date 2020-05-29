@@ -2,6 +2,7 @@
   hosts: coreos
   tasks:
     - name: "enable docker service"
+      become: true
       systemd:
         state: started
         enabled: yes

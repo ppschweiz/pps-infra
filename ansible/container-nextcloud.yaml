@@ -1,4 +1,5 @@
 - name: start mariadb container
+  become: true
   docker_container:
     image: "mariadb:10.4"
     name: "nextcloud-mysql"
@@ -6,7 +7,7 @@
     restart_policy: always
     pull: True
     volumes:
-      - /data/mysql/nextcloud:/var/lib/mysql
+      - /var/srv/mysql/nextcloud:/var/lib/mysql
     env:
       MYSQL_RANDOM_ROOT_PASSWORD="true"
       MYSQL_ONETIME_PASSWORD="true"
@@ -15,6 +16,7 @@
       MYSQL_DATABASE="nextcloud"
 
 - name: start redis container
+  become: true
   docker_container:
     image: "redis:alpine"
     name: "nextcloud-redis"
@@ -23,6 +25,7 @@
     restart_policy: always
 
 - name: start nextcloud container
+  become: true
   docker_container:
     image: "nextcloud:18-apache"
     name: "nextcloud"
@@ -36,8 +39,8 @@
       - nextcloud-mysql:mysql
       - nextcloud-redis:redis
     volumes:
-      - /data/files/nextcloud/html:/var/www/html
-      - /data/files/nextcloud/data:/srv/data
+      - /var/srv/files/nextcloud/html:/var/www/html
+      - /var/srv/files/nextcloud/data:/srv/data
     env:
       NEXTCLOUD_DATA_DIR=/srv/data
       NEXTCLOUD_UPDATE=1
@@ -53,6 +56,7 @@
       SMTP_PORT="25"
 
 - name: start nextcloud cron container
+  become: true
   docker_container:
     image: "nextcloud:18-apache"
     name: "nextcloud-cron"
@@ -64,8 +68,8 @@
       - nextcloud-mysql:mysql
       - nextcloud-redis:redis
     volumes:
-      - /data/files/nextcloud/html:/var/www/html
-      - /data/files/nextcloud/data:/srv/data
+      - /var/srv/files/nextcloud/html:/var/www/html
+      - /var/srv/files/nextcloud/data:/srv/data
     env:
       NEXTCLOUD_DATA_DIR=/srv/data
       NEXTCLOUD_UPDATE=1
@@ -81,6 +85,7 @@
       SMTP_PORT="25"
 
 - name: start backup container for mariadb
+  become: true
   docker_container:
     image: yloeffler/mysql-backup
     name: "nextcloud-backup"
@@ -90,7 +95,7 @@
     links:
       - nextcloud-mysql:mysql
     volumes:
-      - /data/mysql-backup/nextcloud:/backup
+      - /var/srv/mysql-backup/nextcloud:/backup
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
       MAX_BACKUPS=3

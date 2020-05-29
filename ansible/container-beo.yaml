@@ -6,8 +6,8 @@
          restart_policy: always
          pull: True
          volumes:
-           - /data/mysql/beo:/var/lib/mysql
-           - /data/mysql/beo-initdb:/docker-entrypoint-initdb.d
+           - /var/srv/mysql/beo:/var/lib/mysql
+           - /var/srv/mysql/beo-initdb:/docker-entrypoint-initdb.d
          env:
            MYSQL_RANDOM_ROOT_PASSWORD="true"
            MYSQL_ONETIME_PASSWORD="true"
@@ -65,8 +65,8 @@
            GPG_PRIVATEKEY="{{ lookup('hashi_vault', 'secret=secret/beo/GPG_PRIVATEKEY:value') }}"
            MEMBER_API_USER="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_USER:value') }}"
            MEMBER_API_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_PASSWORD:value') }}"
-           MEMBER_API_CERT="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_CERT:value') }}"
-           MEMBER_API_CERT_SECRET="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_CERT_SECRET:value') }}"
+           #MEMBER_API_CERT="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_CERT:value') }}"
+           #MEMBER_API_CERT_SECRET="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_CERT_SECRET:value') }}"
 
      - name: start backup container for first mysql container
        docker_container:
@@ -78,7 +78,7 @@
          links:
            - beo-mysql:mysql
          volumes:
-           - /data/mysql-backup/beo/:/backup
+           - /var/srv/mysql-backup/beo/:/backup
          env:
            MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/beo/mysql/password:value') }}"
            MAX_BACKUPS=3

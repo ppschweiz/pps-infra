@@ -1,4 +1,5 @@
      - name: start mysql container
+       become: true
        docker_container:
          image: "mariadb:10.4"
          name: "mumble-mysql"
@@ -6,7 +7,7 @@
          restart_policy: always
          pull: True
          volumes:
-           - /data/mysql/mumble:/var/lib/mysql
+           - /var/srv/mysql/mumble:/var/lib/mysql
          env:
            MYSQL_RANDOM_ROOT_PASSWORD="true"
            MYSQL_ONETIME_PASSWORD="true"
@@ -15,6 +16,7 @@
            MYSQL_DATABASE="mumble"
 
      - name: start mumble container
+       become: true
        docker_container:
          image: ppschweiz/mumble
          name: "mumble"
@@ -26,8 +28,8 @@
          links:
            - mumble-mysql:mysql
          volumes:
-           - /home/core/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro
-           - /home/core/ssl/private/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
+           - /var/srv/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro
+           - /var/srv/ssl/private/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
          published_ports:
            - 64738:64738
            - 64738:64738/udp
@@ -44,6 +46,7 @@
            SERVER_TEXT='<br>Willkommen auf dem Mumble Server der <b>Piratenpartei Schweiz</b>. <a href="https://www.piratenpartei.ch">https://www.piratenpartei.ch</a><br>Welcome to the mumble server of the <b>Pirate Party Switzerland</b>. <a href="https://www.pirateparty.ch">https://www.pirateparty.ch</a><br><br>For the gamers:&nbsp;You are free and welcome to use this server. Please use the Gaming Channel.<br><br>Die Aufzeichnung von Gespr&auml;chen ist nur nach Einwilligung aller im Kanal Anwesenden erlaubt. Neu Eintretende m&uuml;ssen sofort auf eine laufende Aufzeichnung hingeweisen werden. Ausgenommen sind als deklarierte Sitzungen.<br>Recording is only allowed after obtaining consent from all people in the channel. New arrivals must be notified immediatly about the recording. Public official meetings are excempt.<br><br>Server Admins:&nbsp;philhug'
 
      - name: start backup container for first mysql container
+       become: true
        docker_container:
          image: yloeffler/mysql-backup
          name: "mumble-backup"
@@ -53,7 +56,7 @@
          links:
            - mumble-mysql:mysql
          volumes:
-           - /data/mysql-backup/mumble/:/backup
+           - /var/srv/mysql-backup/mumble/:/backup
          env:
            MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
            MAX_BACKUPS=3

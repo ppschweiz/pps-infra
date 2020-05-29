@@ -1,10 +1,11 @@
      - name: start factura container
+       become: true
        docker_container:
          image: ppschweiz/factura
          name: "factura"
          restart_policy: always
          state: started
-         pull: True
+         #pull: True
          env:
            CIVI_API_URL=https://members-crm.piratenpartei.ch/wp-content/plugins/civicrm/civicrm/extern/rest.php
            CIVI_SITE_KEY="{{ lookup('hashi_vault', 'secret=secret/api/CIVICRM_SITE_KEY:value') }}"

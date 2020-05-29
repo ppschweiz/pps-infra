@@ -1,4 +1,5 @@
      - name: start mysql container
+       become: true
        docker_container:
          image: "mariadb:10.4"
          name: "members-crm-mysql"
@@ -6,7 +7,7 @@
          restart_policy: always
          pull: True
          volumes:
-           - /data/mysql/members-crm:/var/lib/mysql
+           - /var/srv/mysql/members-crm:/var/lib/mysql
          env:
            MYSQL_ROOT_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mysql/root:value') }}"
            MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
@@ -14,6 +15,7 @@
            MYSQL_DATABASE="members-crm"
 
      - name: start second mysql container
+       become: true
        docker_container:
          image: "mariadb:10.4"
          name: "members-crm-mysql-civi"
@@ -21,7 +23,7 @@
          pull: True
          restart_policy: always
          volumes:
-           - /data/mysql/members-crm-civi:/var/lib/mysql
+           - /var/srv/mysql/members-crm-civi:/var/lib/mysql
          env:
            MYSQL_ROOT_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mysql/root:value') }}"
            MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
@@ -29,6 +31,7 @@
            MYSQL_DATABASE="members-crm-civi"
 
      - name: start civicrm container
+       become: true
        docker_container:
          image: wordpress:php7.3
          name: "members-crm"
@@ -41,13 +44,14 @@
            - members-crm-mysql:mysql
            - members-crm-mysql-civi:mysql-civi
          volumes:
-           - /data/files/members-crm/:/var/www/html
+           - /var/srv/files/members-crm/:/var/www/html
          env:
            WORDPRESS_DB_NAME="members-crm"
            WORDPRESS_DB_USER="members-crm"
            WORDPRESS_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
 
      - name: start civicrm croncontainer
+       become: true
        docker_container:
          image: wordpress:cli
          name: "members-crm-cron"
@@ -58,7 +62,7 @@
            - members-crm-mysql:mysql
            - members-crm-mysql-civi:mysql-civi
          volumes:
-           - /data/files/members-crm/:/var/www/html
+           - /var/srv/files/members-crm/:/var/www/html
          command: /var/www/html/startjobs.sh
          user: "33"
          env:
@@ -67,6 +71,7 @@
            WORDPRESS_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
 
      - name: start backup container for first mysql container
+       become: true
        docker_container:
          image: yloeffler/mysql-backup
          name: "members-crm-backup"
@@ -76,13 +81,14 @@
          links:
            - members-crm-mysql:mysql
          volumes:
-           - /data/mysql-backup/members-crm/:/backup
+           - /var/srv/mysql-backup/members-crm/:/backup
          env:
            MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
            MAX_BACKUPS=3
            COMPRESS=y
 
      - name: start backup container for second mysql container
+       become: true
        docker_container:
          image: yloeffler/mysql-backup
          name: "members-crm-civi-backup"
@@ -92,7 +98,7 @@
          links:
            - members-crm-mysql-civi:mysql
          volumes:
-           - /data/mysql-backup/members-crm-civi/:/backup
+           - /var/srv/mysql-backup/members-crm-civi/:/backup
          env:
            MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
            MAX_BACKUPS=3

@@ -1,4 +1,5 @@
      - name: start duplicity container
+       become: true
        docker_container:
          image: "datacoda/cron-duplicity"
          name: "duplicity"
@@ -6,7 +7,7 @@
          pull: True
          restart_policy: always
          volumes:
-           - /data:/data
+           - /var/srv:/data
          env:
            AWS_ACCESS_KEY_ID="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-access-key-id:value') }}"
            AWS_SECRET_ACCESS_KEY="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-secret-access-key:value') }}"

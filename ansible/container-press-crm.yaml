@@ -1,4 +1,5 @@
      - name: start mysql container
+       become: true
        docker_container:
          image: "mariadb:10.4"
          name: "press-crm-mysql"
@@ -6,7 +7,7 @@
          restart_policy: always
          pull: True
          volumes:
-           - /data/mysql/press-crm:/var/lib/mysql
+           - /var/srv/mysql/press-crm:/var/lib/mysql
          env:
            MYSQL_ROOT_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mysql/root:value') }}"
            MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
@@ -14,6 +15,7 @@
            MYSQL_DATABASE="press-crm"
 
      - name: start second mysql container
+       become: true
        docker_container:
          image: "mariadb:10.4"
          name: "press-crm-mysql-civi"
@@ -21,7 +23,7 @@
          pull: True
          restart_policy: always
          volumes:
-           - /data/mysql/press-crm-civi:/var/lib/mysql
+           - /var/srv/mysql/press-crm-civi:/var/lib/mysql
          env:
            MYSQL_ROOT_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mysql/root:value') }}"
            MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
@@ -29,6 +31,7 @@
            MYSQL_DATABASE="press-crm-civi"
 
      - name: start civicrm container
+       become: true
        docker_container:
          image: wordpress:php7.3
          name: "press-crm"
@@ -41,13 +44,14 @@
            - press-crm-mysql:mysql
            - press-crm-mysql-civi:mysql-civi
          volumes:
-           - /data/files/press-crm/:/var/www/html
+           - /var/srv/files/press-crm/:/var/www/html
          env:
            WORDPRESS_DB_NAME="press-crm"
            WORDPRESS_DB_USER="press-crm"
            WORDPRESS_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
 
      - name: start civicrm croncontainer
+       become: true
        docker_container:
          image: wordpress:cli
          name: "press-crm-cron"
@@ -58,7 +62,7 @@
            - press-crm-mysql:mysql
            - press-crm-mysql-civi:mysql-civi
          volumes:
-           - /data/files/press-crm/:/var/www/html
+           - /var/srv/files/press-crm/:/var/www/html
          command: /var/www/html/startjobs.sh
          user: "33"
          env:
@@ -67,6 +71,7 @@
            WORDPRESS_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
 
      - name: start backup container for first mysql container
+       become: true
        docker_container:
          image: yloeffler/mysql-backup
          name: "press-crm-backup"
@@ -76,13 +81,14 @@
          links:
            - press-crm-mysql:mysql
          volumes:
-           - /data/mysql-backup/press-crm/:/backup
+           - /var/srv/mysql-backup/press-crm/:/backup
          env:
            MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
            MAX_BACKUPS=3
            COMPRESS=y
 
      - name: start backup container for second mysql container
+       become: true
        docker_container:
          image: yloeffler/mysql-backup
          name: "press-crm-civi-backup"
@@ -92,7 +98,7 @@
          links:
            - press-crm-mysql-civi:mysql
          volumes:
-           - /data/mysql-backup/press-crm-civi/:/backup
+           - /var/srv/mysql-backup/press-crm-civi/:/backup
          env:
            MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
            MAX_BACKUPS=3
