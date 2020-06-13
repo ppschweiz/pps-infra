@@ -2,9 +2,10 @@
   become: true
   copy:
     src: files/traefik.toml
-    dest: /etc/traefik.toml
+    dest: /var/srv/traefik/traefik.toml
 
 - name: Traefik
+  become: true
   docker_container:
     image: "traefik:maroilles"
     restart_policy: always
@@ -14,7 +15,7 @@
     state: started
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/traefik.toml:/traefik.toml
-      - /var/lib/traefik:/var/lib/traefik
+      - /var/srv/traefik/traefik.toml:/traefik.toml:ro
+      - /var/srv/traefik/acme.json:/var/lib/traefik/acme.json
     env:
       GODEBUG=tls13=1

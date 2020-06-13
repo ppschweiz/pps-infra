@@ -1,3 +1,0 @@
-- import_playbook: bootstrap.yaml
-- import_playbook: users.yaml
-- import_playbook: docker.yaml

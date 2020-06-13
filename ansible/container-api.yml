@@ -1,4 +1,5 @@
 - name: api
+  become: true
   docker_container:
     labels:
       "traefik.enable": "true"
