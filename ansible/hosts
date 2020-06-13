@@ -1,5 +1,5 @@
 localhost ansible_connection=local
-coreos-5-p.piratenpartei.ch ansible_ssh_user=core ansible_python_interpreter=/home/core/pypy/bin/pypy
+coreos-5-p.piratenpartei.ch ansible_ssh_user=core
 
 [coreos]
 coreos-5-p.piratenpartei.ch
