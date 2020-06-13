@@ -1,22 +1,4 @@
 ---
-- name: bootstrap on coreos
-  hosts: coreos
-  gather_facts: False
-  roles:
-    - vmware.ansible-coreos-bootstrap
-  tasks:
-
-    - name: uninstall docker-py
-      pip:
-        name: docker-py
-        state: absent
-        executable: /home/core/bin/pip
-
-    - name: Install docker
-      pip:
-        name: docker
-        executable: /home/core/bin/pip
-
-  vars:
-    - coreos_pypy_version: "7.1.1"
-    - coreos_pypy_sha256: "d0b226d2dd656c622cee4e3e982225e1b346653823b49f736d8b0ddc06fd0c73"
+- name: Install Python modules for Ansible
+  become: yes
+  command: /usr/bin/rpm-ostree install python3-docker
