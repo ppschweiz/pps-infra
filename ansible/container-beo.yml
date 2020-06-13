@@ -1,85 +1,85 @@
-     - name: start mysql container
-       docker_container:
-         image: "mysql:5"
-         name: "beo-mysql"
-         state: started
-         restart_policy: always
-         pull: True
-         volumes:
-           - /var/srv/mysql/beo:/var/lib/mysql
-           - /var/srv/mysql/beo-initdb:/docker-entrypoint-initdb.d
-         env:
-           MYSQL_RANDOM_ROOT_PASSWORD="true"
-           MYSQL_ONETIME_PASSWORD="true"
-           MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/beo/mysql/password:value') }}"
-           MYSQL_USER="beo_backend"
-           MYSQL_DATABASE="beo_backend"
+- name: start mysql container
+  docker_container:
+    image: "mysql:5"
+    name: "beo-mysql"
+    state: started
+    restart_policy: always
+    pull: True
+    volumes:
+      - /var/srv/mysql/beo:/var/lib/mysql
+      - /var/srv/mysql/beo-initdb:/docker-entrypoint-initdb.d
+    env:
+      MYSQL_RANDOM_ROOT_PASSWORD="true"
+      MYSQL_ONETIME_PASSWORD="true"
+      MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/beo/mysql/password:value') }}"
+      MYSQL_USER="beo_backend"
+      MYSQL_DATABASE="beo_backend"
 
-     - name: create gpg-private-kegpg-private-key
-       copy:
-         content: "{{ lookup('hashi_vault', 'secret=secret/beo/GPG_PRIVATEKEY:value') }}"
-         dest: /secrets/beo/gpg.priv
+- name: create gpg-private-kegpg-private-key
+  copy:
+    content: "{{ lookup('hashi_vault', 'secret=secret/beo/GPG_PRIVATEKEY:value') }}"
+    dest: /secrets/beo/gpg.priv
 
-     - name: create SSL-KEY
-       copy:
-         content: "{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_CERT_SECRET:value') }}"
-         dest: /secrets/beo/client-x509-certificate.key
+- name: create SSL-KEY
+  copy:
+    content: "{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_CERT_SECRET:value') }}"
+    dest: /secrets/beo/client-x509-certificate.key
 
-     - name: copy static and public files to coreos-server
-       copy:
-         src: files/beo/{{ item }}
-         dest: /secrets/beo/
-       with_items:
-         - ca-x509-certificate.crt
-         - client-x509-certificate.crt
+- name: copy static and public files to coreos-server
+  copy:
+    src: files/beo/{{ item }}
+    dest: /secrets/beo/
+  with_items:
+    - ca-x509-certificate.crt
+    - client-x509-certificate.crt
 
-     - name: start beo container
-       docker_container:
-         image: ppschweiz/beo-backend
-         name: "beo-backend"
-         restart_policy: always
-         state: started
-         pull: True
-         volumes:
-           - /secrets/beo:/secrets/
-         links:
-           - beo-mysql:mysql
-         env:
-           MEMBER_API_APPNAME="televotia"
-           MYSQL_HOST="mysql"
-           MYSQL_USER="beo_backend"
-           MYSQL_DATABASE="beo_backend"
-           MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/beo/mysql/password:value') }}"
-           CIVI_API_URL=https://members-crm.piratenpartei.ch/wp-content/plugins/civicrm/civicrm/extern/rest.php
-           CIVI_SITE_KEY="{{ lookup('hashi_vault', 'secret=secret/api/CIVICRM_SITE_KEY:value') }}"
-           CIVI_API_KEY="{{ lookup('hashi_vault', 'secret=secret/api/CIVICRM_API_KEY:value') }}"
-           API_GNUPG_KEY_SENDER="televotia-backend@piratenpartei.ch"
-           API_GNUPG_KEY_RECEIVER="televotia@id.piratenpartei.ch"
-           SMTP_HOSTNAME="smtprelay.piratenpartei.ch"
-           SMTP_USER=""
-           SMTP_PASSWORD=""
-           SMTP_PORT="25"
-           IDAPI_URL="idapi.piratenpartei.ch"
-           ID_URL="id.piratenpartei.ch"
-           GPG_PRIVATEKEY_PASSPHRASE="{{ lookup('hashi_vault', 'secret=secret/beo/GPG_PRIVATEKEY_PASSPHRASE:value') }}"
-           GPG_PRIVATEKEY="{{ lookup('hashi_vault', 'secret=secret/beo/GPG_PRIVATEKEY:value') }}"
-           MEMBER_API_USER="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_USER:value') }}"
-           MEMBER_API_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_PASSWORD:value') }}"
-           #MEMBER_API_CERT="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_CERT:value') }}"
-           #MEMBER_API_CERT_SECRET="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_CERT_SECRET:value') }}"
+- name: start beo container
+  docker_container:
+    image: ppschweiz/beo-backend
+    name: "beo-backend"
+    restart_policy: always
+    state: started
+    pull: True
+    volumes:
+      - /secrets/beo:/secrets/
+    links:
+      - beo-mysql:mysql
+    env:
+      MEMBER_API_APPNAME="televotia"
+      MYSQL_HOST="mysql"
+      MYSQL_USER="beo_backend"
+      MYSQL_DATABASE="beo_backend"
+      MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/beo/mysql/password:value') }}"
+      CIVI_API_URL=https://members-crm.piratenpartei.ch/wp-content/plugins/civicrm/civicrm/extern/rest.php
+      CIVI_SITE_KEY="{{ lookup('hashi_vault', 'secret=secret/api/CIVICRM_SITE_KEY:value') }}"
+      CIVI_API_KEY="{{ lookup('hashi_vault', 'secret=secret/api/CIVICRM_API_KEY:value') }}"
+      API_GNUPG_KEY_SENDER="televotia-backend@piratenpartei.ch"
+      API_GNUPG_KEY_RECEIVER="televotia@id.piratenpartei.ch"
+      SMTP_HOSTNAME="smtprelay.piratenpartei.ch"
+      SMTP_USER=""
+      SMTP_PASSWORD=""
+      SMTP_PORT="25"
+      IDAPI_URL="idapi.piratenpartei.ch"
+      ID_URL="id.piratenpartei.ch"
+      GPG_PRIVATEKEY_PASSPHRASE="{{ lookup('hashi_vault', 'secret=secret/beo/GPG_PRIVATEKEY_PASSPHRASE:value') }}"
+      GPG_PRIVATEKEY="{{ lookup('hashi_vault', 'secret=secret/beo/GPG_PRIVATEKEY:value') }}"
+      MEMBER_API_USER="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_USER:value') }}"
+      MEMBER_API_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_PASSWORD:value') }}"
+      #MEMBER_API_CERT="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_CERT:value') }}"
+      #MEMBER_API_CERT_SECRET="{{ lookup('hashi_vault', 'secret=secret/beo/MEMBER_API_CERT_SECRET:value') }}"
 
-     - name: start backup container for first mysql container
-       docker_container:
-         image: yloeffler/mysql-backup
-         name: "beo-backup"
-         state: started
-         restart_policy: always
-         pull: True
-         links:
-           - beo-mysql:mysql
-         volumes:
-           - /var/srv/mysql-backup/beo/:/backup
-         env:
-           MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/beo/mysql/password:value') }}"
-           MAX_BACKUPS=3
-           COMPRESS=y
+- name: start backup container for first mysql container
+  docker_container:
+    image: yloeffler/mysql-backup
+    name: "beo-backup"
+    state: started
+    restart_policy: always
+    pull: True
+    links:
+      - beo-mysql:mysql
+    volumes:
+      - /var/srv/mysql-backup/beo/:/backup
+    env:
+      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/beo/mysql/password:value') }}"
+      MAX_BACKUPS=3
+      COMPRESS=y

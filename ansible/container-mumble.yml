@@ -1,63 +1,63 @@
-     - name: start mysql container
-       become: true
-       docker_container:
-         image: "mariadb:10.4"
-         name: "mumble-mysql"
-         state: started
-         restart_policy: always
-         pull: True
-         volumes:
-           - /var/srv/mysql/mumble:/var/lib/mysql
-         env:
-           MYSQL_RANDOM_ROOT_PASSWORD="true"
-           MYSQL_ONETIME_PASSWORD="true"
-           MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
-           MYSQL_USER="mumble"
-           MYSQL_DATABASE="mumble"
+- name: start mysql container
+  become: true
+  docker_container:
+    image: "mariadb:10.4"
+    name: "mumble-mysql"
+    state: started
+    restart_policy: always
+    pull: True
+    volumes:
+      - /var/srv/mysql/mumble:/var/lib/mysql
+    env:
+      MYSQL_RANDOM_ROOT_PASSWORD="true"
+      MYSQL_ONETIME_PASSWORD="true"
+      MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
+      MYSQL_USER="mumble"
+      MYSQL_DATABASE="mumble"
 
-     - name: start mumble container
-       become: true
-       docker_container:
-         image: ppschweiz/mumble
-         name: "mumble"
-         restart_policy: always
-         labels:
-          "traefik.enable": "false"
-         state: started
-         pull: True
-         links:
-           - mumble-mysql:mysql
-         volumes:
-           - /var/srv/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro
-           - /var/srv/ssl/private/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
-         published_ports:
-           - 64738:64738
-           - 64738:64738/udp
-         env:
-           MYSQL_HOST="mysql"
-           MYSQL_USER="mumble"
-           MYSQL_DATABASE="mumble"
-           MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
-           MAX_USERS="200"
-           LOGDAYS="-1"
-           BANDWIDTH="72000"
-           SSL_CERT="/tls/talk.piratenpartei.ch.crt"
-           SSL_KEY="/tls/talk.piratenpartei.ch.key"
-           SERVER_TEXT='<br>Willkommen auf dem Mumble Server der <b>Piratenpartei Schweiz</b>. <a href="https://www.piratenpartei.ch">https://www.piratenpartei.ch</a><br>Welcome to the mumble server of the <b>Pirate Party Switzerland</b>. <a href="https://www.pirateparty.ch">https://www.pirateparty.ch</a><br><br>For the gamers:&nbsp;You are free and welcome to use this server. Please use the Gaming Channel.<br><br>Die Aufzeichnung von Gespr&auml;chen ist nur nach Einwilligung aller im Kanal Anwesenden erlaubt. Neu Eintretende m&uuml;ssen sofort auf eine laufende Aufzeichnung hingeweisen werden. Ausgenommen sind als deklarierte Sitzungen.<br>Recording is only allowed after obtaining consent from all people in the channel. New arrivals must be notified immediatly about the recording. Public official meetings are excempt.<br><br>Server Admins:&nbsp;philhug'
+- name: start mumble container
+  become: true
+  docker_container:
+    image: ppschweiz/mumble
+    name: "mumble"
+    restart_policy: always
+    labels:
+     "traefik.enable": "false"
+    state: started
+    pull: True
+    links:
+      - mumble-mysql:mysql
+    volumes:
+      - /var/srv/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro
+      - /var/srv/ssl/private/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
+    published_ports:
+      - 64738:64738
+      - 64738:64738/udp
+    env:
+      MYSQL_HOST="mysql"
+      MYSQL_USER="mumble"
+      MYSQL_DATABASE="mumble"
+      MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
+      MAX_USERS="200"
+      LOGDAYS="-1"
+      BANDWIDTH="72000"
+      SSL_CERT="/tls/talk.piratenpartei.ch.crt"
+      SSL_KEY="/tls/talk.piratenpartei.ch.key"
+      SERVER_TEXT='<br>Willkommen auf dem Mumble Server der <b>Piratenpartei Schweiz</b>. <a href="https://www.piratenpartei.ch">https://www.piratenpartei.ch</a><br>Welcome to the mumble server of the <b>Pirate Party Switzerland</b>. <a href="https://www.pirateparty.ch">https://www.pirateparty.ch</a><br><br>For the gamers:&nbsp;You are free and welcome to use this server. Please use the Gaming Channel.<br><br>Die Aufzeichnung von Gespr&auml;chen ist nur nach Einwilligung aller im Kanal Anwesenden erlaubt. Neu Eintretende m&uuml;ssen sofort auf eine laufende Aufzeichnung hingeweisen werden. Ausgenommen sind als deklarierte Sitzungen.<br>Recording is only allowed after obtaining consent from all people in the channel. New arrivals must be notified immediatly about the recording. Public official meetings are excempt.<br><br>Server Admins:&nbsp;philhug'
 
-     - name: start backup container for first mysql container
-       become: true
-       docker_container:
-         image: yloeffler/mysql-backup
-         name: "mumble-backup"
-         state: started
-         restart_policy: always
-         pull: True
-         links:
-           - mumble-mysql:mysql
-         volumes:
-           - /var/srv/mysql-backup/mumble/:/backup
-         env:
-           MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
-           MAX_BACKUPS=3
-           COMPRESS=y
+- name: start backup container for first mysql container
+  become: true
+  docker_container:
+    image: yloeffler/mysql-backup
+    name: "mumble-backup"
+    state: started
+    restart_policy: always
+    pull: True
+    links:
+      - mumble-mysql:mysql
+    volumes:
+      - /var/srv/mysql-backup/mumble/:/backup
+    env:
+      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
+      MAX_BACKUPS=3
+      COMPRESS=y

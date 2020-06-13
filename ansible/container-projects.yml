@@ -1,62 +1,62 @@
-     - name: start mysql container
-       become: true
-       docker_container:
-         image: "mariadb:10.4"
-         name: "projects-mysql"
-         state: started
-         restart_policy: always
-         pull: True
-         volumes:
-           - /var/srv/mysql/projects:/var/lib/mysql
-         env:
-           MYSQL_RANDOM_ROOT_PASSWORD="true"
-           MYSQL_ONETIME_PASSWORD="true"
-           MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
-           MYSQL_USER="projects"
-           MYSQL_DATABASE="projects"
+- name: start mysql container
+  become: true
+  docker_container:
+    image: "mariadb:10.4"
+    name: "projects-mysql"
+    state: started
+    restart_policy: always
+    pull: True
+    volumes:
+      - /var/srv/mysql/projects:/var/lib/mysql
+    env:
+      MYSQL_RANDOM_ROOT_PASSWORD="true"
+      MYSQL_ONETIME_PASSWORD="true"
+      MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
+      MYSQL_USER="projects"
+      MYSQL_DATABASE="projects"
 
-     - name: Redmine mail config
-       become: true
-       copy:
-         src: files/redmine.yml
-         dest: /var/srv/files/projects/configuration.yml
+- name: Redmine mail config
+  become: true
+  copy:
+    src: files/redmine.yml
+    dest: /var/srv/files/projects/configuration.yml
 
-     - name: start projects/redmine container
-       become: true
-       docker_container:
-         image: ppschweiz/redmine
-         name: "projects"
-         restart_policy: always
-         labels:
-          "traefik.enable": "true"
-         state: started
-         pull: True
-         links:
-           - projects-mysql:mysql
-         volumes:
-           - /var/srv/files/projects/configuration.yml:/usr/src/redmine/config/configuration.yml:ro
-           - /var/srv/files/projects/files:/usr/src/redmine/files
-           - /var/srv/files/projects/themes/PurpleMine2:/usr/src/redmine/public/themes/PurpleMine2:ro
-         env:
-           REDMINE_DB_DATABASE="projects"
-           REDMINE_DB_MYSQL="mysql"
-           REDMINE_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
-           REDMINE_DB_USERNAME="projects"
-           REDMINE_PLUGINS_MIGRATE=true
+- name: start projects/redmine container
+  become: true
+  docker_container:
+    image: ppschweiz/redmine
+    name: "projects"
+    restart_policy: always
+    labels:
+     "traefik.enable": "true"
+    state: started
+    pull: True
+    links:
+      - projects-mysql:mysql
+    volumes:
+      - /var/srv/files/projects/configuration.yml:/usr/src/redmine/config/configuration.yml:ro
+      - /var/srv/files/projects/files:/usr/src/redmine/files
+      - /var/srv/files/projects/themes/PurpleMine2:/usr/src/redmine/public/themes/PurpleMine2:ro
+    env:
+      REDMINE_DB_DATABASE="projects"
+      REDMINE_DB_MYSQL="mysql"
+      REDMINE_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
+      REDMINE_DB_USERNAME="projects"
+      REDMINE_PLUGINS_MIGRATE=true
 
-     - name: start backup container for first mysql container
-       become: true
-       docker_container:
-         image: yloeffler/mysql-backup
-         name: "projects-backup"
-         state: started
-         restart_policy: always
-         pull: True
-         links:
-           - projects-mysql:mysql
-         volumes:
-           - /var/srv/mysql-backup/projects/:/backup
-         env:
-           MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
-           MAX_BACKUPS=3
-           COMPRESS=y
+- name: start backup container for first mysql container
+  become: true
+  docker_container:
+    image: yloeffler/mysql-backup
+    name: "projects-backup"
+    state: started
+    restart_policy: always
+    pull: True
+    links:
+      - projects-mysql:mysql
+    volumes:
+      - /var/srv/mysql-backup/projects/:/backup
+    env:
+      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
+      MAX_BACKUPS=3
+      COMPRESS=y
