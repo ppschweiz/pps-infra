@@ -1,17 +1,60 @@
-- name: start duplicity container
+- name: Restic init repo test
   become: true
   docker_container:
-    image: "datacoda/cron-duplicity"
-    name: "duplicity"
+    image: "restic/restic"
+    name: "restic-test"
     state: started
     pull: True
-    restart_policy: always
+    auto_remove: yes
+    command: "snapshots"
     volumes:
       - /var/srv:/data
     env:
       AWS_ACCESS_KEY_ID="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-access-key-id:value') }}"
       AWS_SECRET_ACCESS_KEY="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-secret-access-key:value') }}"
-      PASSPHRASE="{{ lookup('hashi_vault', 'secret=secret/duplicity/passphrase:value') }}"
+      RESTIC_CACHE_DIR="/root/.cache/restic"
+      RESTIC_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/duplicity/passphrase:value') }}"
+      RESTIC_REPOSITORY="s3:sos-ch-dk-2.exo.io/pps-backup"
       SOURCE_PATH="/data"
-      REMOTE_URL="s3://sos-ch-dk-2.exo.io/pps-backup"
-      PARAMS="--exclude /data/mysql --exclude /data/migration --exclude /data/migration-mysql"
+  register: restic_init
+  ignore_errors: true
+
+- name: Restic init repo
+  become: true
+  docker_container:
+    image: "restic/restic"
+    name: "restic-init"
+    state: started
+    pull: True
+    auto_remove: yes
+    command: "init"
+    volumes:
+      - /var/srv:/data
+    env:
+      AWS_ACCESS_KEY_ID="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-access-key-id:value') }}"
+      AWS_SECRET_ACCESS_KEY="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-secret-access-key:value') }}"
+      RESTIC_CACHE_DIR="/root/.cache/restic"
+      RESTIC_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/duplicity/passphrase:value') }}"
+      RESTIC_REPOSITORY="s3:sos-ch-dk-2.exo.io/pps-backup"
+      SOURCE_PATH="/data"
+  when: restic_init is failed
+
+- name: Restic backup service
+  become: true
+  docker_container:
+    image: "restic/restic"
+    name: "restic"
+    state: started
+    pull: True
+    restart_policy: always
+    entrypoint: ""
+    command: '/bin/sh -c "restic backup $SOURCE_PATH; restic check --read-data-subset $(date +%u)/7"; restic forget --keep-last 5 --keep-daily 30 --keep-weekly 12 --keep-monthly 12 --cleanup-cache --prune --dry-run"; sleep 12h"'
+    volumes:
+      - /var/srv:/data
+    env:
+      AWS_ACCESS_KEY_ID="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-access-key-id:value') }}"
+      AWS_SECRET_ACCESS_KEY="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-secret-access-key:value') }}"
+      RESTIC_CACHE_DIR="/root/.cache/restic"
+      RESTIC_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/duplicity/passphrase:value') }}"
+      RESTIC_REPOSITORY="s3:sos-ch-dk-2.exo.io/pps-backup"
+      SOURCE_PATH="/data"
