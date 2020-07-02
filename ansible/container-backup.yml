@@ -48,7 +48,7 @@
     pull: True
     restart_policy: always
     entrypoint: ""
-    command: '/bin/sh -c "restic backup $SOURCE_PATH; restic check --read-data-subset $(date +%u)/7"; restic forget --keep-last 5 --keep-daily 30 --keep-weekly 12 --keep-monthly 12 --cleanup-cache --prune --dry-run"; sleep 12h"'
+    command: '/bin/sh -c "restic backup $SOURCE_PATH; restic check --read-data-subset $(date +%u)/7; restic forget --keep-last 5 --keep-daily 30 --keep-weekly 12 --keep-monthly 12 --cleanup-cache --prune --dry-run; sleep 12h"'
     volumes:
       - /var/srv:/data
     env:
