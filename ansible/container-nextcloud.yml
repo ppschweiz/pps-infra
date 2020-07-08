@@ -7,7 +7,7 @@
     restart_policy: always
     pull: True
     volumes:
-      - /var/srv/mysql/nextcloud:/var/lib/mysql
+      - /var/srv/mysql/nextcloud:/var/lib/mysql:Z
     env:
       MYSQL_RANDOM_ROOT_PASSWORD="true"
       MYSQL_ONETIME_PASSWORD="true"
@@ -39,8 +39,8 @@
       - nextcloud-mysql:mysql
       - nextcloud-redis:redis
     volumes:
-      - /var/srv/files/nextcloud/html:/var/www/html
-      - /var/srv/files/nextcloud/data:/srv/data
+      - /var/srv/files/nextcloud/html:/var/www/html:z
+      - /var/srv/files/nextcloud/data:/srv/data:z
     env:
       NEXTCLOUD_DATA_DIR=/srv/data
       NEXTCLOUD_UPDATE=1
@@ -68,8 +68,8 @@
       - nextcloud-mysql:mysql
       - nextcloud-redis:redis
     volumes:
-      - /var/srv/files/nextcloud/html:/var/www/html
-      - /var/srv/files/nextcloud/data:/srv/data
+      - /var/srv/files/nextcloud/html:/var/www/html:z
+      - /var/srv/files/nextcloud/data:/srv/data:z
     env:
       NEXTCLOUD_DATA_DIR=/srv/data
       NEXTCLOUD_UPDATE=1
@@ -95,7 +95,7 @@
     links:
       - nextcloud-mysql:mysql
     volumes:
-      - /var/srv/mysql-backup/nextcloud:/backup
+      - /var/srv/mysql-backup/nextcloud:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
       MAX_BACKUPS=3

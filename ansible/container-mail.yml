@@ -7,8 +7,8 @@
     ports: "25:25"
     state: started
     volumes:
-      - /var/srv/files/mail/queue:/queue
-      - /var/srv/files/mail/etc/:/overrides/
+      - /var/srv/files/mail/queue:/queue:Z
+      - /var/srv/files/mail/etc:/overrides:ro,Z
     env:
       DOMAIN=piratenpartei.ch
       HOSTNAME=coreos-4-p.piratenpartei.ch

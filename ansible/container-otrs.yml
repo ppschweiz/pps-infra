@@ -7,8 +7,8 @@
     restart_policy: always
     pull: True
     volumes:
-      - /var/srv/mysql/otrs:/var/lib/mysql
-      - /var/srv/mysql/otrs.cnf:/etc/mysql/mysql.conf.d/otrs.cnf
+      - /var/srv/mysql/otrs:/var/lib/mysql:Z
+      - /var/srv/mysql/otrs.cnf:/etc/mysql/mysql.conf.d/otrs.cnf:ro,Z
     env:
       MYSQL_RANDOM_ROOT_PASSWORD="true"
       MYSQL_ONETIME_PASSWORD="true"
@@ -30,8 +30,8 @@
     links:
       - otrs-mysql:mysql
     volumes:
-      - /var/srv/files/otrs/gnupg/:/opt/otrs/.gnupg/
-      - /var/srv/files/otrs/article/:/opt/otrs/var/article/
+      - /var/srv/files/otrs/gnupg:/opt/otrs/.gnupg:Z
+      - /var/srv/files/otrs/article:/opt/otrs/var/article:Z
     env:
       MYSQL_PORT_3306_TCP_ADDR="mysql"
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/otrs/mysql/password:value') }}"
@@ -55,7 +55,7 @@
     links:
       - otrs-mysql:mysql
     volumes:
-      - /var/srv/mysql-backup/otrs/:/backup
+      - /var/srv/mysql-backup/otrs:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/otrs/mysql/password:value') }}"
       MAX_BACKUPS=3

@@ -7,7 +7,7 @@
     restart_policy: always
     pull: True
     volumes:
-      - /var/srv/mysql/projects:/var/lib/mysql
+      - /var/srv/mysql/projects:/var/lib/mysql:Z
     env:
       MYSQL_RANDOM_ROOT_PASSWORD="true"
       MYSQL_ONETIME_PASSWORD="true"
@@ -34,9 +34,9 @@
     links:
       - projects-mysql:mysql
     volumes:
-      - /var/srv/files/projects/configuration.yml:/usr/src/redmine/config/configuration.yml:ro
-      - /var/srv/files/projects/files:/usr/src/redmine/files
-      - /var/srv/files/projects/themes/PurpleMine2:/usr/src/redmine/public/themes/PurpleMine2:ro
+      - /var/srv/files/projects/configuration.yml:/usr/src/redmine/config/configuration.yml:ro,Z
+      - /var/srv/files/projects/files:/usr/src/redmine/files:Z
+      - /var/srv/files/projects/themes/PurpleMine2:/usr/src/redmine/public/themes/PurpleMine2:ro,Z
     env:
       REDMINE_DB_DATABASE="projects"
       REDMINE_DB_MYSQL="mysql"
@@ -55,7 +55,7 @@
     links:
       - projects-mysql:mysql
     volumes:
-      - /var/srv/mysql-backup/projects/:/backup
+      - /var/srv/mysql-backup/projects:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
       MAX_BACKUPS=3
