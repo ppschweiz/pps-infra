@@ -7,7 +7,7 @@
     pull: True
     restart_policy: always
     volumes:
-      - /var/srv:/data
+      - /var/srv:/data:z
     env:
       AWS_ACCESS_KEY_ID="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-access-key-id:value') }}"
       AWS_SECRET_ACCESS_KEY="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-secret-access-key:value') }}"

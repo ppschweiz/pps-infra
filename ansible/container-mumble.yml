@@ -25,7 +25,7 @@
     restart_policy: always
     pull: True
     volumes:
-      - /var/srv/mysql/mumble:/var/lib/mysql
+      - /var/srv/mysql/mumble:/var/lib/mysql:Z
     env:
       MYSQL_RANDOM_ROOT_PASSWORD="true"
       MYSQL_ONETIME_PASSWORD="true"
@@ -46,7 +46,7 @@
     links:
       - mumble-mysql:mysql
     volumes:
-      - /var/srv/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro
+      - /var/srv/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro,Z
       - /var/srv/ssl/private/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
     published_ports:
       - 64738:64738
@@ -74,7 +74,7 @@
     links:
       - mumble-mysql:mysql
     volumes:
-      - /var/srv/mysql-backup/mumble/:/backup
+      - /var/srv/mysql-backup/mumble:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
       MAX_BACKUPS=3

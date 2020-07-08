@@ -6,8 +6,8 @@
     restart_policy: always
     pull: True
     volumes:
-      - /var/srv/mysql/beo:/var/lib/mysql
-      - /var/srv/mysql/beo-initdb:/docker-entrypoint-initdb.d
+      - /var/srv/mysql/beo:/var/lib/mysql:Z
+      - /var/srv/mysql/beo-initdb:/docker-entrypoint-initdb.d:Z
     env:
       MYSQL_RANDOM_ROOT_PASSWORD="true"
       MYSQL_ONETIME_PASSWORD="true"
@@ -41,7 +41,7 @@
     state: started
     pull: True
     volumes:
-      - /secrets/beo:/secrets/
+      - /secrets/beo:/secrets:Z
     links:
       - beo-mysql:mysql
     env:
@@ -78,7 +78,7 @@
     links:
       - beo-mysql:mysql
     volumes:
-      - /var/srv/mysql-backup/beo/:/backup
+      - /var/srv/mysql-backup/beo/:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/beo/mysql/password:value') }}"
       MAX_BACKUPS=3

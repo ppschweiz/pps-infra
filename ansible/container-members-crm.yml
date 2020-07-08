@@ -7,7 +7,7 @@
     restart_policy: always
     pull: True
     volumes:
-      - /var/srv/mysql/members-crm:/var/lib/mysql
+      - /var/srv/mysql/members-crm:/var/lib/mysql:Z
     env:
       MYSQL_ROOT_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mysql/root:value') }}"
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
@@ -23,7 +23,7 @@
     pull: True
     restart_policy: always
     volumes:
-      - /var/srv/mysql/members-crm-civi:/var/lib/mysql
+      - /var/srv/mysql/members-crm-civi:/var/lib/mysql:Z
     env:
       MYSQL_ROOT_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mysql/root:value') }}"
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
@@ -44,7 +44,7 @@
       - members-crm-mysql:mysql
       - members-crm-mysql-civi:mysql-civi
     volumes:
-      - /var/srv/files/members-crm/:/var/www/html
+      - /var/srv/files/members-crm:/var/www/html:z
     env:
       WORDPRESS_DB_NAME="members-crm"
       WORDPRESS_DB_USER="members-crm"
@@ -62,7 +62,7 @@
       - members-crm-mysql:mysql
       - members-crm-mysql-civi:mysql-civi
     volumes:
-      - /var/srv/files/members-crm/:/var/www/html
+      - /var/srv/files/members-crm:/var/www/html:z
     command: /var/www/html/startjobs.sh
     user: "33"
     env:
@@ -81,7 +81,7 @@
     links:
       - members-crm-mysql:mysql
     volumes:
-      - /var/srv/mysql-backup/members-crm/:/backup
+      - /var/srv/mysql-backup/members-crm:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
       MAX_BACKUPS=3
@@ -98,7 +98,7 @@
     links:
       - members-crm-mysql-civi:mysql
     volumes:
-      - /var/srv/mysql-backup/members-crm-civi/:/backup
+      - /var/srv/mysql-backup/members-crm-civi:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
       MAX_BACKUPS=3
