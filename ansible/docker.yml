@@ -12,7 +12,6 @@
     - include: container-press-crm.yml
     - include: container-members-crm.yml
     - include: container-mumble.yml
-    - include: container-factura.yml
     - include: container-mail.yml
     - include: container-backup.yml
     - include: container-projects.yml
