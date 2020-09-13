@@ -1,3 +1,16 @@
+- name: Restic Cron dir
+  become: true
+  file:
+    path: /var/srv/restic
+    recurse: yes
+    state: directory
+
+- name: Restic Cron
+  become: true
+  copy:
+    src: files/restic.cron
+    dest: /var/srv/restic/restic.cron
+
 - name: Restic init repo test
   become: true
   docker_container:
@@ -48,9 +61,10 @@
     pull: True
     restart_policy: always
     entrypoint: ""
-    command: '/bin/sh -c "restic backup $SOURCE_PATH; restic check --read-data-subset $(date +%u)/7; restic forget --keep-last 5 --keep-daily 30 --keep-weekly 12 --keep-monthly 12 --cleanup-cache --prune --dry-run; sleep 12h"'
+    command: 'busybox crond -f -l 0 -L /dev/stdout'
     volumes:
       - /var/srv:/data:z
+      - /var/srv/restic/restic.cron:/var/spool/cron/crontabs/root:ro,Z
     env:
       AWS_ACCESS_KEY_ID="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-access-key-id:value') }}"
       AWS_SECRET_ACCESS_KEY="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-secret-access-key:value') }}"

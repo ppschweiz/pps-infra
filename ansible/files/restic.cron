@@ -1,0 +1,3 @@
+7 */6 * * * restic backup $SOURCE_PATH
+37 2 * * * restic check --read-data-subset $(date +\%u)/7
+47 5 * * * restic forget --keep-last 5 --keep-daily 30 --keep-weekly 12 --keep-monthly 12 --cleanup-cache --prune --dry-run
