@@ -9,3 +9,8 @@
       authorized_key:
         key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILKISI55eX0kPjM3CnMAJd8eeS5omqaC5WKLFEKikWZC'
         user: core
+    - name: deploy public key JackArrr
+      authorized_key:
+        key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOYxLOiLpLo0RiqPzaM1jLISc18bjrrOe97HmhPSxvxr'
+        user: core
+
