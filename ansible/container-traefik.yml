@@ -16,6 +16,6 @@
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:z
       - /var/srv/traefik/traefik.toml:/traefik.toml:ro,Z
-      - /var/srv/traefik/acme.json:/var/lib/traefik/acme.json,Z
+      - /var/srv/traefik/acme.json:/var/lib/traefik/acme.json:Z
     env:
       GODEBUG=tls13=1
