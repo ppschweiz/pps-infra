@@ -62,6 +62,7 @@
     restart_policy: always
     entrypoint: ""
     command: 'busybox crond -f -l 0 -L /dev/stdout'
+    hostname: "restic.{{ ansible_hostname }}"
     volumes:
       - /var/srv:/data:z
       - /var/srv/restic/restic.cron:/var/spool/cron/crontabs/root:ro,Z
