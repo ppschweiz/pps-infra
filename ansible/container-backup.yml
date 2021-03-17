@@ -27,7 +27,7 @@
       AWS_SECRET_ACCESS_KEY="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-secret-access-key:value') }}"
       RESTIC_CACHE_DIR="/root/.cache/restic"
       RESTIC_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/duplicity/passphrase:value') }}"
-      RESTIC_REPOSITORY="s3:sos-ch-dk-2.exo.io/pps-backup"
+      RESTIC_REPOSITORY="s3:sos-ch-gva-2.exo.io/pps-backup-2"
       SOURCE_PATH="/data"
   register: restic_init
   ignore_errors: true
@@ -48,7 +48,7 @@
       AWS_SECRET_ACCESS_KEY="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-secret-access-key:value') }}"
       RESTIC_CACHE_DIR="/root/.cache/restic"
       RESTIC_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/duplicity/passphrase:value') }}"
-      RESTIC_REPOSITORY="s3:sos-ch-dk-2.exo.io/pps-backup"
+      RESTIC_REPOSITORY="s3:sos-ch-gva-2.exo.io/pps-backup-2"
       SOURCE_PATH="/data"
   when: restic_init is failed
 
@@ -71,5 +71,5 @@
       AWS_SECRET_ACCESS_KEY="{{ lookup('hashi_vault', 'secret=secret/duplicity/aws-secret-access-key:value') }}"
       RESTIC_CACHE_DIR="/root/.cache/restic"
       RESTIC_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/duplicity/passphrase:value') }}"
-      RESTIC_REPOSITORY="s3:sos-ch-dk-2.exo.io/pps-backup"
+      RESTIC_REPOSITORY="s3:sos-ch-gva-2.exo.io/pps-backup-2"
       SOURCE_PATH="/data"
