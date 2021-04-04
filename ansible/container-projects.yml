@@ -20,6 +20,7 @@
   template:
     src: templates/redmine.yml.j2
     dest: /var/srv/files/projects/configuration.yml
+    mode: '0644'
 
 - name: start projects/redmine container
   become: true

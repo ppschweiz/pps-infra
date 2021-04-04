@@ -10,6 +10,7 @@
   copy:
     src: files/restic.cron
     dest: /var/srv/restic/restic.cron
+    mode: '0644'
 
 - name: Restic init repo test
   become: true
