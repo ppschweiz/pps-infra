@@ -1,0 +1,10 @@
+production:
+  delivery_method: :smtp
+  smtp_settings:
+    address: mail.cyon.ch
+    port: 465
+    tls: true
+    domain: piratenpartei.ch
+    authentication: :login
+    user_name: noreply@piratenpartei.ch
+    password: {{ lookup('hashi_vault', 'secret=secret/noreply:value') }}
