@@ -51,9 +51,14 @@
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
       MYSQL_DATABASE=nextcloud
       REDIS_HOST=redis
-      SMTP_HOSTNAME="smtprelay.piratenpartei.ch"
+      MAIL_DOMAIN="piratenpartei.ch"
       MAIL_FROM_ADDRESS="cloud@piratenpartei.ch"
-      SMTP_PORT="25"
+      SMTP_AUTHTYPE="login"
+      SMTP_HOST="mail.cyon.ch"
+      SMTP_NAME="noreply@piratenpartei.ch"
+      SMTP_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/noreply:value') }}"
+      SMTP_PORT="465"
+      SMTP_SECURE="ssl"
 
 - name: start nextcloud cron container
   become: true
@@ -80,9 +85,14 @@
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
       MYSQL_DATABASE=nextcloud
       REDIS_HOST=redis
-      SMTP_HOSTNAME="smtprelay.piratenpartei.ch"
+      MAIL_DOMAIN="piratenpartei.ch"
       MAIL_FROM_ADDRESS="cloud@piratenpartei.ch"
-      SMTP_PORT="25"
+      SMTP_AUTHTYPE="login"
+      SMTP_HOST="mail.cyon.ch"
+      SMTP_NAME="noreply@piratenpartei.ch"
+      SMTP_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/noreply:value') }}"
+      SMTP_PORT="465"
+      SMTP_SECURE="ssl"
 
 - name: start backup container for mariadb
   become: true
