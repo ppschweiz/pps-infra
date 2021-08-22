@@ -25,7 +25,7 @@
 - name: start projects/redmine container
   become: true
   docker_container:
-    image: ppschweiz/redmine
+    image: ghcr.io/ppschweiz/docker-redmine:master
     name: "projects"
     restart_policy: always
     labels:

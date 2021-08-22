@@ -36,7 +36,7 @@
 - name: start mumble container
   become: true
   docker_container:
-    image: ppschweiz/mumble
+    image: ghcr.io/ppschweiz/docker-mumble:master
     name: "mumble"
     restart_policy: always
     labels:

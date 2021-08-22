@@ -19,7 +19,7 @@
 - name: start info/otrs container
   become: true
   docker_container:
-    image: ppschweiz/otrs
+    image: ghcr.io/ppschweiz/otrs:master
     name: "otrs"
     restart_policy: always
     labels:
