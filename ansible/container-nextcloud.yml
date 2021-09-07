@@ -27,7 +27,7 @@
 - name: start nextcloud container
   become: true
   docker_container:
-    image: "nextcloud:21-apache"
+    image: "nextcloud:22-apache"
     name: "nextcloud"
     labels:
      "traefik.enable": "true"
@@ -63,7 +63,7 @@
 - name: start nextcloud cron container
   become: true
   docker_container:
-    image: "nextcloud:21-apache"
+    image: "nextcloud:22-apache"
     name: "nextcloud-cron"
     entrypoint: /cron.sh
     state: started
