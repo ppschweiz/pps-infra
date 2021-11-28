@@ -33,7 +33,7 @@
 - name: start civicrm container
   become: true
   docker_container:
-    image: wordpress:php7.3
+    image: wordpress:php7.4
     name: "members-crm"
     restart_policy: always
     labels:
