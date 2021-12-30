@@ -48,9 +48,11 @@
     volumes:
       - /var/srv/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro,Z
       - /var/srv/ssl/private/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
-    published_ports:
-      - 64738:64738
-      - 64738:64738/udp
+    ports:
+      - "[::]:64738:64738"
+      - "0.0.0.0:64738:64738"
+      - "[::]:64738:64738/udp"
+      - "0.0.0.0:64738:64738/udp"
     env:
       MYSQL_HOST="mysql"
       MYSQL_USER="mumble"

@@ -12,7 +12,11 @@
     restart_policy: always
     pull: True
     name: "traefik"
-    ports: "80:80,443:443"
+    ports:
+      - "[::]:443:443"
+      - "0.0.0.0:443:443"
+      - "[::]:80:80"
+      - "0.0.0.0:80:80"
     state: started
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:z
