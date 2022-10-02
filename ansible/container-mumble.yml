@@ -80,5 +80,7 @@
       - /var/srv/mysql-backup/mumble:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
+      MYSQL_USER="mumble"
+      MYSQL_DATABASE="mumble"
       MAX_BACKUPS=3
       COMPRESS=y

@@ -60,5 +60,7 @@
       - /var/srv/mysql-backup/projects:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
+      MYSQL_USER="projects"
+      MYSQL_DATABASE="projects"
       MAX_BACKUPS=3
       COMPRESS=y

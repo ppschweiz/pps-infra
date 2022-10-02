@@ -164,6 +164,8 @@
       - /var/srv/mysql-backup/nextcloud:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
+      MYSQL_USER="nextcloud"
+      MYSQL_DATABASE="nextcloud"
       MAX_BACKUPS=3
       COMPRESS=y
 
@@ -181,5 +183,7 @@
       - /var/srv/mysql-backup/onlyoffice:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/mariadb/password:value') }}"
+      MYSQL_USER="onlyoffice"
+      MYSQL_DATABASE="onlyoffice"
       MAX_BACKUPS=3
       COMPRESS=y
