@@ -28,9 +28,9 @@
       - /var/srv/mysql/mumble:/var/lib/mysql:Z
     env:
       MARIADB_RANDOM_ROOT_PASSWORD="true"
-      MARIADB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
-      MARIADB_USER="mumble"
-      MARIADB_DATABASE="mumble"
+      MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
+      MYSQL_USER="mumble"
+      MYSQL_DATABASE="mumble"
       MARIADB_AUTO_UPGRADE=1
       MARIADB_DISABLE_UPGRADE_BACKUP=1
 
@@ -80,7 +80,5 @@
       - /var/srv/mysql-backup/mumble:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
-      MYSQL_USER="mumble"
-      MYSQL_DATABASE="mumble"
       MAX_BACKUPS=3
       COMPRESS=y

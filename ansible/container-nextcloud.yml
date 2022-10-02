@@ -9,11 +9,12 @@
     volumes:
       - /var/srv/mysql/nextcloud:/var/lib/mysql:Z
     env:
-      MYSQL_RANDOM_ROOT_PASSWORD="true"
-      MYSQL_ONETIME_PASSWORD="true"
+      MARIADB_RANDOM_ROOT_PASSWORD="true"
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
       MYSQL_USER="nextcloud"
       MYSQL_DATABASE="nextcloud"
+      MARIADB_AUTO_UPGRADE=1
+      MARIADB_DISABLE_UPGRADE_BACKUP=1
 
 - name: start nextcloud redis container
   become: true
@@ -106,9 +107,9 @@
       - /var/srv/mysql/onlyoffice:/var/lib/mysql:Z
     env:
       MARIADB_RANDOM_ROOT_PASSWORD="true"
-      MARIADB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/mariadb/password:value') }}"
-      MARIADB_USER="onlyoffice"
-      MARIADB_DATABASE="onlyoffice"
+      MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/mariadb/password:value') }}"
+      MYSQL_USER="onlyoffice"
+      MYSQL_DATABASE="onlyoffice"
       MARIADB_AUTO_UPGRADE=1
       MARIADB_DISABLE_UPGRADE_BACKUP=1
 
@@ -164,8 +165,6 @@
       - /var/srv/mysql-backup/nextcloud:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
-      MYSQL_USER="nextcloud"
-      MYSQL_DATABASE="nextcloud"
       MAX_BACKUPS=3
       COMPRESS=y
 
@@ -183,7 +182,5 @@
       - /var/srv/mysql-backup/onlyoffice:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/mariadb/password:value') }}"
-      MYSQL_USER="onlyoffice"
-      MYSQL_DATABASE="onlyoffice"
       MAX_BACKUPS=3
       COMPRESS=y
