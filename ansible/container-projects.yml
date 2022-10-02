@@ -1,19 +1,20 @@
-- name: start mysql container
+- name: start mariadb container
   become: true
   docker_container:
-    image: "mariadb:10.4"
-    name: "projects-mysql"
+    image: "mariadb:10.6"
+    name: "projects-mariadb"
     state: started
     restart_policy: always
     pull: True
     volumes:
       - /var/srv/mysql/projects:/var/lib/mysql:Z
     env:
-      MYSQL_RANDOM_ROOT_PASSWORD="true"
-      MYSQL_ONETIME_PASSWORD="true"
-      MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
-      MYSQL_USER="projects"
-      MYSQL_DATABASE="projects"
+      MARIADB_RANDOM_ROOT_PASSWORD="true"
+      MARIADB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
+      MARIADB_USER="projects"
+      MARIADB_DATABASE="projects"
+      MARIADB_AUTO_UPGRADE=1
+      MARIADB_DISABLE_UPGRADE_BACKUP=1
 
 - name: Redmine mail config
   become: true
@@ -33,7 +34,7 @@
     state: started
     pull: True
     links:
-      - projects-mysql:mysql
+      - projects-mariadb:mysql
     volumes:
       - /var/srv/files/projects/configuration.yml:/usr/src/redmine/config/configuration.yml:ro,Z
       - /var/srv/files/projects/files:/usr/src/redmine/files:Z
@@ -45,7 +46,7 @@
       REDMINE_DB_USERNAME="projects"
       REDMINE_PLUGINS_MIGRATE=true
 
-- name: start backup container for first mysql container
+- name: start backup container for first mariadb container
   become: true
   docker_container:
     image: yloeffler/mysql-backup
@@ -54,7 +55,7 @@
     restart_policy: always
     pull: True
     links:
-      - projects-mysql:mysql
+      - projects-mariadb:mysql
     volumes:
       - /var/srv/mysql-backup/projects:/backup:Z
     env:
