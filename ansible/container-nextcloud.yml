@@ -1,4 +1,4 @@
-- name: start mariadb container
+- name: start nextcloud mariadb container
   become: true
   docker_container:
     image: "mariadb:10.4"
@@ -15,7 +15,7 @@
       MYSQL_USER="nextcloud"
       MYSQL_DATABASE="nextcloud"
 
-- name: start redis container
+- name: start nextcloud redis container
   become: true
   docker_container:
     image: "redis:alpine"
@@ -94,7 +94,63 @@
       SMTP_PORT="465"
       SMTP_SECURE="ssl"
 
-- name: start backup container for mariadb
+- name: start onlyoffice mariadb
+  become: true
+  docker_container:
+    image: "mariadb:10.6"
+    name: "onlyoffice-mariadb"
+    state: started
+    restart_policy: always
+    pull: True
+    volumes:
+      - /var/srv/mysql/onlyoffice:/var/lib/mysql:Z
+    env:
+      MARIADB_RANDOM_ROOT_PASSWORD="true"
+      MARIADB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/mariadb/password:value') }}"
+      MARIADB_USER="onlyoffice"
+      MARIADB_DATABASE="onlyoffice"
+      MARIADB_AUTO_UPGRADE=1
+      MARIADB_DISABLE_UPGRADE_BACKUP=1
+
+- name: start onlyoffice rabbitmq
+  become: true
+  docker_container:
+    image: "rabbitmq:alpine"
+    name: "onlyoffice-rabbitmq"
+    state: started
+    restart_policy: always
+    pull: True
+    env:
+      RABBITMQ_DEFAULT_USER=onlyoffice
+      RABBITMQ_DEFAULT_PASS="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/rabbitmq/password:value') }}"
+
+- name: start onlyoffice container
+  become: true
+  docker_container:
+    image: "onlyoffice/documentserver"
+    name: "nextcloud-onlyoffice"
+    labels:
+     "traefik.enable": "true"
+     "traefik.frontend.rule": "Host:office.piratenpartei.ch"
+    state: started
+    pull: True
+    restart_policy: always
+    links:
+      - nextcloud:nextcloud
+      - onlyoffice-mariadb:onlyoffice-mariadb
+      - onlyoffice-rabbitmq:onlyoffice-rabbitmq
+    env:
+      DB_TYPE=mariadb
+      DB_HOST=onlyoffice-mariadb
+      DB_PORT=3306
+      DB_NAME=onlyoffice
+      DB_USER=onlyoffice
+      DB_PWD="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/mariadb/password:value') }}"
+      AMQP_URI="amqp://onlyoffice:{{ lookup('hashi_vault', 'secret=secret/onlyoffice/rabbitmq/password:value') }}@onlyoffice-rabbitmq"
+      JWT_ENABLED=true
+      JWT_SECRET="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/jwt/password:value') }}"
+
+- name: start backup container for nextcloud mariadb
   become: true
   docker_container:
     image: yloeffler/mysql-backup
@@ -108,5 +164,22 @@
       - /var/srv/mysql-backup/nextcloud:/backup:Z
     env:
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
+      MAX_BACKUPS=3
+      COMPRESS=y
+
+- name: start backup container for onlyoffice mariadb
+  become: true
+  docker_container:
+    image: yloeffler/mysql-backup
+    name: "onlyoffice-backup"
+    state: started
+    restart_policy: always
+    pull: True
+    links:
+      - onlyoffice-mariadb:mysql
+    volumes:
+      - /var/srv/mysql-backup/onlyoffice:/backup:Z
+    env:
+      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/mariadb/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y
