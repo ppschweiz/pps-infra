@@ -33,7 +33,7 @@
 - name: start civicrm container
   become: true
   docker_container:
-    image: wordpress:php7.4
+    image: wordpress:php8.0
     name: "press-crm"
     restart_policy: always
     labels:
