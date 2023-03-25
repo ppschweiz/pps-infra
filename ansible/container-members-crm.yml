@@ -1,7 +1,7 @@
 - name: start mysql container
   become: true
   docker_container:
-    image: "mariadb:10.4"
+    image: "mariadb:10.6"
     name: "members-crm-mysql"
     state: started
     restart_policy: always
