@@ -13,6 +13,8 @@
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
       MYSQL_USER="members-crm"
       MYSQL_DATABASE="members-crm"
+      MARIADB_AUTO_UPGRADE=1
+      MARIADB_DISABLE_UPGRADE_BACKUP=1
 
 - name: start second mysql container
   become: true
@@ -29,6 +31,8 @@
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
       MYSQL_USER="members-crm"
       MYSQL_DATABASE="members-crm-civi"
+      MARIADB_AUTO_UPGRADE=1
+      MARIADB_DISABLE_UPGRADE_BACKUP=1
 
 - name: start civicrm container
   become: true
