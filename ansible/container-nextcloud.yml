@@ -53,7 +53,7 @@
       MYSQL_DATABASE=nextcloud
       REDIS_HOST=redis
       MAIL_DOMAIN="piratenpartei.ch"
-      MAIL_FROM_ADDRESS="cloud@piratenpartei.ch"
+      MAIL_FROM_ADDRESS="cloud"
       SMTP_AUTHTYPE="login"
       SMTP_HOST="mail.cyon.ch"
       SMTP_NAME="noreply@piratenpartei.ch"
@@ -87,7 +87,7 @@
       MYSQL_DATABASE=nextcloud
       REDIS_HOST=redis
       MAIL_DOMAIN="piratenpartei.ch"
-      MAIL_FROM_ADDRESS="cloud@piratenpartei.ch"
+      MAIL_FROM_ADDRESS="cloud"
       SMTP_AUTHTYPE="login"
       SMTP_HOST="mail.cyon.ch"
       SMTP_NAME="noreply@piratenpartei.ch"
