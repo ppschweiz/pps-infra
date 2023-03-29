@@ -74,6 +74,7 @@
       MYSQL_PORT=3306
       MYSQL_USER="otrs"
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/otrs/mysql/password:value') }}"
+      MYSQL_ENV_MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/otrs/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y
       EXTRA_OPTS="--max_allowed_packet=32M --no-tablespaces"
