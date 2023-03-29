@@ -13,6 +13,7 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
     networks:
       - name: net-otrs
     volumes:
@@ -36,6 +37,7 @@
      "traefik.frontend.rule": "Host:info.piratenpartei.ch"
     state: started
     pull: True
+    networks_cli_compatible: yes
     networks:
       - name: net-otrs
       - name: net-proxy
@@ -62,6 +64,7 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
     networks:
       - name: net-otrs
     volumes:
