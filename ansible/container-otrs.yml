@@ -1,4 +1,11 @@
-- name: start mysql container
+- name: Create OTRS network network
+  become: true
+  docker_network:
+    name: net-otrs
+    attachable: yes
+    internal: yes
+
+- name: start OTRS mysql container
   become: true
   docker_container:
     image: "mysql:5"
@@ -6,6 +13,8 @@
     state: started
     restart_policy: always
     pull: True
+    networks:
+      - name: net-otrs
     volumes:
       - /var/srv/mysql/otrs:/var/lib/mysql:Z
       - /var/srv/mysql/otrs.cnf:/etc/mysql/mysql.conf.d/otrs.cnf:ro,Z
@@ -27,13 +36,14 @@
      "traefik.frontend.rule": "Host:info.piratenpartei.ch"
     state: started
     pull: True
-    links:
-      - otrs-mysql:mysql
+    networks:
+      - name: net-otrs
+      - name: net-proxy
     volumes:
       - /var/srv/files/otrs/gnupg:/opt/otrs/.gnupg:Z
       - /var/srv/files/otrs/article:/opt/otrs/var/article:Z
     env:
-      MYSQL_PORT_3306_TCP_ADDR="mysql"
+      MYSQL_PORT_3306_TCP_ADDR="otrs-mysql"
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/otrs/mysql/password:value') }}"
       MYSQL_USER="otrs"
       MYSQL_DATABASE="otrs"
@@ -44,7 +54,7 @@
       GPG_PWD_EEC960A4="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/EEC960A4:password') }}"
       GPG_PWD_B2C7B0F5="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/B2C7B0F5:password') }}"
 
-- name: start backup container for first mysql container
+- name: start backup container for OTRS mysql container
   become: true
   docker_container:
     image: yloeffler/mysql-backup
@@ -52,11 +62,14 @@
     state: started
     restart_policy: always
     pull: True
-    links:
-      - otrs-mysql:mysql
+    networks:
+      - name: net-otrs
     volumes:
       - /var/srv/mysql-backup/otrs:/backup:Z
     env:
+      MYSQL_HOST="otrs-mysql"
+      MYSQL_PORT=3306
+      MYSQL_USER="otrs"
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/otrs/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y
