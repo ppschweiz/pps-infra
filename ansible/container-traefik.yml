@@ -2,6 +2,7 @@
   become: true
   docker_network:
     name: net-proxy
+    attachable: yes
 
 - name: Traefik config
   become: true
