@@ -32,6 +32,7 @@
     image: ghcr.io/ppschweiz/otrs:master
     name: "otrs"
     restart_policy: always
+    command: "apache2 -DFOREGROUND"
     labels:
      "traefik.enable": "true"
      "traefik.frontend.rule": "Host:info.piratenpartei.ch"
@@ -40,7 +41,35 @@
     networks_cli_compatible: yes
     networks:
       - name: net-otrs
-      - name: net-proxy
+      - name: bridge
+    volumes:
+      - /var/srv/files/otrs/gnupg:/opt/otrs/.gnupg:Z
+      - /var/srv/files/otrs/article:/opt/otrs/var/article:Z
+    env:
+      MYSQL_PORT_3306_TCP_ADDR="otrs-mysql"
+      MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/otrs/mysql/password:value') }}"
+      MYSQL_USER="otrs"
+      MYSQL_DATABASE="otrs"
+      SMTP_PORT_25_TCP_ADDR="smtprelay.piratenpartei.ch"
+      SMTP_PORT_25_TCP_PORT="25"
+      GPG_PWD_D4CE5C2B="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/D4CE5C2B:password') }}"
+      GPG_PWD_50D7E35A="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/50D7E35A:password') }}"
+      GPG_PWD_EEC960A4="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/EEC960A4:password') }}"
+      GPG_PWD_B2C7B0F5="{{ lookup('hashi_vault', 'secret=secret/otrs/gnupg/B2C7B0F5:password') }}"
+
+- name: start info/otrs cron container
+  become: true
+  docker_container:
+    image: ghcr.io/ppschweiz/otrs:master
+    name: "otrs-cron"
+    restart_policy: always
+    entrypoint: "/otrscron.sh"
+    state: started
+    pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-otrs
+      - name: bridge
     volumes:
       - /var/srv/files/otrs/gnupg:/opt/otrs/.gnupg:Z
       - /var/srv/files/otrs/article:/opt/otrs/var/article:Z
