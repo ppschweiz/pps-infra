@@ -19,7 +19,7 @@
 - name: start second mysql container
   become: true
   docker_container:
-    image: "mariadb:10.4"
+    image: "mariadb:10.6"
     name: "members-crm-mysql-civi"
     state: started
     pull: True
