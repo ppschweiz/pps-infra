@@ -12,6 +12,6 @@
     env:
       DOMAIN=piratenpartei.ch
       HOSTNAME=coreos-4-p.piratenpartei.ch
-      RELAYNETS="159.100.252.217 159.100.254.166 172.17.0.0/16"
+      RELAYNETS="159.100.254.166 172.16.0.0/12"
       MESSAGE_SIZE_LIMIT=10240000
       RELAYHOST=""
