@@ -13,6 +13,7 @@
     state: started
     restart_policy: always
     pull: True
+    ulimits: nofile:4096:32768
     networks_cli_compatible: yes
     networks:
       - name: net-otrs

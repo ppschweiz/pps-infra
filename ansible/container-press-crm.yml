@@ -6,6 +6,7 @@
     state: started
     restart_policy: always
     pull: True
+    ulimits: nofile:4096:32768
     volumes:
       - /var/srv/mysql/press-crm:/var/lib/mysql:Z
     env:
@@ -23,6 +24,7 @@
     name: "press-crm-mysql-civi"
     state: started
     pull: True
+    ulimits: nofile:4096:32768
     restart_policy: always
     volumes:
       - /var/srv/mysql/press-crm-civi:/var/lib/mysql:Z

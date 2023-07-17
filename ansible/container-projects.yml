@@ -6,6 +6,7 @@
     state: started
     restart_policy: always
     pull: True
+    ulimits: nofile:4096:32768
     volumes:
       - /var/srv/mysql/projects:/var/lib/mysql:Z
     env:
