@@ -16,4 +16,5 @@
     - include: container-backup.yml
     - include: container-projects.yml
     - include: container-otrs.yml
+      tags: otrs
     - include: container-nextcloud.yml
