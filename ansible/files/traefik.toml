@@ -1,33 +1,46 @@
-defaultEntryPoints = ["https", "http"]
-logLevel = "ERROR"
+[global]
+sendAnonymousUsage = false
 
-[entryPoints]
-  [entryPoints.http]
-  address = ":80"
-  compress = true
-    [entryPoints.http.redirect]
-    entryPoint = "https"
-    permanent = true
-  [entryPoints.https]
-  address = ":443"
-    [entryPoints.https.tls]
-    minVersion = "VersionTLS12"
+[log]
+level = "ERROR"
 
-[docker]
+[entryPoints.http]
+address = ":80"
+[entryPoints.http.http.redirections.entryPoint]
+to = "https"
+scheme = "https"
+permanent = true
+[entryPoints.https]
+address = ":443"
+certResolver = "le"
+
+[tls.options.default]
+minVersion = "VersionTLS12"
+sniStrict = true
+
+[providers.docker]
+#network = "proxy"
 exposedByDefault = false
-domain = "piratenpartei.ch"
 
-[acme]
+#[docker]
+#domain = "piratenpartei.ch"
+
+[certificatesResolvers.le.acme]
 email = "admin@piratenpartei.ch"
 storage = "/var/lib/traefik/acme.json"
 entryPoint = "https"
 acmeLogging = true
 onHostRule = true
+[certificatesResolvers.le.acme.httpChallenge]
+entryPoint = "http"
 
-[[acme.domains]]
-  main = "traefik.piratenpartei.ch"
-[[acme.domains]]
-  main = "talk.piratenpartei.ch"
+#[[acme.domains]]
+#  main = "traefik.piratenpartei.ch"
+#[[acme.domains]]
+#  main = "talk.piratenpartei.ch"
 
-[acme.httpChallenge]
-  entryPoint = "http"
+[experimental]
+http3 = true
+
+[api]
+dashboard = false
