@@ -13,4 +13,11 @@
       authorized_key:
         key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOYxLOiLpLo0RiqPzaM1jLISc18bjrrOe97HmhPSxvxr'
         user: core
-
+    - name: deploy public key tegra4
+      authorized_key:
+        key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUJk/Y0iv5hB71CCOfDNHtEF+JFnr5BgBl2HDVx4NOb root@24h-xu'
+        user: core
+    - name: deploy public key jonas
+      authorized_key:
+        key: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDSbYV+6FqX3kj9Oll0MRBoYhYBmn8X1dKy8nV5+IcdDctBHgvKmYqdeRvkncWTNq8iuaN7jdGFYODAJXiZRteJqGHkehmZ6dxvZVOJLSUXeOyRQxRjkjI7F9V3cEBXzQX+fh6q/Vey5UwCz8cgLCp23IXsFl7Rl+u3K3L+akoAQIDerH17ggtyYBiDPhyiLxESCOnrMoacIMVTM9tePZJhB6i4Rkgi8h/YwM7qokeWI58hzm71xhkxbxSGe7CH5NTHpX4cd1o0UsYjMkTqQAN5GCrEn7HtjMXpDF8rK3azTu9MddusVFM5CC0o8mmWB2RdIJb8LvUlaRX/apFsD9fFgrWGmizubvUoPAHfqHZYLSKWicg5NMpv6hKnh3V+WZSOU9Boh3VSgrC/r/VNTkBQdq85xykWfzw5h2PYZ1y+OtfNNP2eqprjNEOL6v/nOj5/unCC8UM4MNSFA3Hm2+RsJtBIgUqx3+s8buWmwmYbHsdhogcR2rr0S9ceSXPYlv7Zk1B+R/Xo+br45kgZbfEkMAj7T2Ca1zx7g2pRo696XwZQBi3FyQEeE4N7GSW3GOPWWOOcDzFgTjED4+Au0FpH3D2/8W0DT0EVlIxvdMlB7komAL+CQPhBYjwfVWnTa0V29eG2MQIVu4paeAaNptMDF7hZLUJOLO2ywc+mwAIQzQ== openpgp:0x42C972AA jonas@violoncello.ch'
+        user: core
