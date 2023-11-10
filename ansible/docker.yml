@@ -7,14 +7,14 @@
         state: started
         enabled: yes
         name: docker.service
-    - include: container-traefik.yml
-    - include: container-api.yml
-    - include: container-press-crm.yml
-    - include: container-members-crm.yml
-    - include: container-mumble.yml
-    - include: container-mail.yml
-    - include: container-backup.yml
-    - include: container-projects.yml
-    - include: container-otrs.yml
+    - import_tasks: container-traefik.yml
+    - import_tasks: container-api.yml
+    - import_tasks: container-press-crm.yml
+    - import_tasks: container-members-crm.yml
+    - import_tasks: container-mumble.yml
+    - import_tasks: container-mail.yml
+    - import_tasks: container-backup.yml
+    - import_tasks: container-projects.yml
+    - import_tasks: container-otrs.yml
       tags: otrs
-    - include: container-nextcloud.yml
+    - import_tasks: container-nextcloud.yml
