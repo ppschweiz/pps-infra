@@ -1,10 +1,3 @@
-- name: copy dumpcerts.sh
-  become: true
-  copy:
-    src: files/dumpcerts.sh
-    dest: /var/srv/dumpcerts.sh
-    mode: '0755'
-
 - name: Create a directory if it does not exist
   become: true
   file:
@@ -14,7 +7,10 @@
 
 - name: dumpcerts for Mumble
   become: true
-  command: /var/srv/dumpcerts.sh /var/srv/traefik/acme.json /var/srv/ssl/
+  command: jq -r '.le.Certificates[] | select(.domain.main=="talk.piratenpartei.ch") | .{{ item.type }}' /var/srv/traefik/acme.json | base64 -d > /var/srv/ssl/talk.piratenpartei.ch.{{ item.extension }};
+  with_items:
+  - { type: certificate, extension: crt } 
+  - { type: key, extension: key }
 
 - name: start mariadb container
   become: true
@@ -48,8 +44,8 @@
     links:
       - mumble-mariadb:mysql
     volumes:
-      - /var/srv/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro,Z
-      - /var/srv/ssl/private/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
+      - /var/srv/ssl/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro,Z
+      - /var/srv/ssl/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
     ports:
       - "[::]:64738:64738"
       - "0.0.0.0:64738:64738"
