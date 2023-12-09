@@ -35,7 +35,7 @@
     restart_policy: always
     labels:
      "traefik.enable": "true"
-     "traefik.frontend.rule": "Host:info.piratenpartei.ch"
+     "traefik.http.routers.otrs.rule": "Host:(`info.piratenpartei.ch`)"
     state: started
     pull: True
     networks_cli_compatible: yes
