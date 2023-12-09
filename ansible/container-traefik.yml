@@ -14,7 +14,7 @@
 - name: Traefik
   become: true
   docker_container:
-    image: "traefik:maroilles"
+    image: "traefik:v2.10"
     restart_policy: always
     pull: True
     name: "traefik"
