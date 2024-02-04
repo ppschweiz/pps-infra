@@ -12,6 +12,7 @@
     permanent = true
 [entryPoints.https]
   address = ":443"
+  [entryPoints.https.http3]
   [entryPoints.https.http.tls]
     certResolver = "le"
 
@@ -29,7 +30,7 @@
     entryPoint = "http"
 
 [experimental]
-http3 = true
+  http3 = true
 
 [api]
-dashboard = false
+  dashboard = false
