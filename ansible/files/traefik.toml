@@ -21,6 +21,7 @@
   sniStrict = true
 
 [providers.docker]
+  network: net-proxy
   exposedByDefault = false
 
 [certificatesResolvers.le.acme]

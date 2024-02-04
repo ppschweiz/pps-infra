@@ -64,6 +64,7 @@
     restart_policy: always
     labels:
      "traefik.enable": "false"
+     "traefik.entryPoint": "https"
      "traefik.http.routers.mumble.rule": "Host(`talk.piratenpartei.ch`)"
      "traefik.http.routers.mumble.tls": "true"
      "traefik.http.routers.mumble.tls.certresolver": "le"

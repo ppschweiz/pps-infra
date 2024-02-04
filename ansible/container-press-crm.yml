@@ -57,6 +57,7 @@
     restart_policy: always
     labels:
      "traefik.enable": "true"
+     "traefik.entryPoint": "https"
      "traefik.http.routers.presscivi.rule": "Host(`press-crm.piratenpartei.ch`)"
      "traefik.http.routers.presscivi.tls": "true"
      "traefik.http.routers.presscivi.tls.certresolver": "le"

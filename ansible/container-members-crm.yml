@@ -58,6 +58,7 @@
     restart_policy: always
     labels:
      "traefik.enable": "true"
+     "traefik.entryPoint": "https"
      "traefik.http.routers.memberscivi.rule": "Host(`members-crm.piratenpartei.ch`)"
      "traefik.http.routers.memberscivi.tls": "true"
      "traefik.http.routers.memberscivi.tls.certresolver": "le"
