@@ -1,16 +1,30 @@
-- name: Create a directory if it does not exist
+- name: Create directory /var/srv/ssl if it does not exist
   become: true
   file:
     path: /var/srv/ssl
     state: directory
     mode: '0755'
 
+- name: Create directory /var/srv/ssl/certs directory and set permissions
+  become: true
+  file:
+    path: /var/srv/ssl/certs
+    state: directory
+    mode: '0755'
+
+- name: Create directory /var/srv/ssl/private and set permissions
+  become: true
+  file:
+    path: /var/srv/ssl/private
+    state: directory
+    mode: '0700'
+
 - name: dumpcerts for Mumble
   become: true
-  command: jq -r '.le.Certificates[] | select(.domain.main=="talk.piratenpartei.ch") | .{{ item.type }}' /var/srv/traefik/acme.json | base64 -d > /var/srv/ssl/talk.piratenpartei.ch.{{ item.extension }};
+  command: jq -r '.le.Certificates[] | select(.domain.main=="talk.piratenpartei.ch") | .{{ item.type }}' /var/srv/traefik/acme.json | base64 -d > /var/srv/ssl/{{ item.subdirectory }}/talk.piratenpartei.ch.{{ item.extension }};
   with_items:
-  - { type: certificate, extension: crt } 
-  - { type: key, extension: key }
+  - { type: certificate, extension: crt, subdirectory: certs } 
+  - { type: key, extension: key, subdirectory: private }
 
 - name: start mariadb container
   become: true
@@ -44,8 +58,8 @@
     links:
       - mumble-mariadb:mysql
     volumes:
-      - /var/srv/ssl/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro,Z
-      - /var/srv/ssl/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
+      - /var/srv/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro,Z
+      - /var/srv/ssl/private/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
     ports:
       - "[::]:64738:64738"
       - "0.0.0.0:64738:64738"
