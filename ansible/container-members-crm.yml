@@ -1,3 +1,11 @@
+- name: Create Members-crm network
+  become: true
+  docker_network:
+    name: net-members-crm
+    attachable: yes
+    internal: yes
+
+
 - name: start mysql container
   become: true
   docker_container:
@@ -6,6 +14,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-members-crm
     ulimits: nofile:4096:32768
     volumes:
       - /var/srv/mysql/members-crm:/var/lib/mysql:Z
@@ -24,6 +35,9 @@
     name: "members-crm-mysql-civi"
     state: started
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-members-crm
     ulimits: nofile:4096:32768
     restart_policy: always
     volumes:
@@ -44,8 +58,15 @@
     restart_policy: always
     labels:
      "traefik.enable": "true"
+     "traefik.http.routers.memberscivi.rule": "Host(`members-crm.piratenpartei.ch`)"
+     "traefik.http.routers.memberscivi.tls": "true"
+     "traefik.http.routers.memberscivi.tls.certresolver": "le"
     state: started
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-proxy
+      - name: net-members-crm
     links:
       - members-crm-mysql:mysql
       - members-crm-mysql-civi:mysql-civi
@@ -63,6 +84,9 @@
     name: "members-crm-cron"
     state: started
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-members-crm
     restart_policy: always
     links:
       - members-crm-mysql:mysql
@@ -84,6 +108,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-members-crm
     links:
       - members-crm-mysql:mysql
     volumes:
@@ -101,6 +128,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-members-crm
     links:
       - members-crm-mysql-civi:mysql
     volumes:

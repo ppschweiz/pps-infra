@@ -1,3 +1,10 @@
+- name: Create Nextcloud network
+  become: true
+  docker_network:
+    name: net-nextcloud
+    attachable: yes
+    internal: yes
+
 - name: start nextcloud mariadb container
   become: true
   docker_container:
@@ -6,6 +13,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-nextcloud
     ulimits: nofile:4096:32768
     volumes:
       - /var/srv/mysql/nextcloud:/var/lib/mysql:Z
@@ -24,6 +34,9 @@
     name: "nextcloud-redis"
     state: started
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-nextcloud
     restart_policy: always
 
 - name: start nextcloud container
@@ -34,8 +47,14 @@
     labels:
      "traefik.enable": "true"
      "traefik.http.routers.nextcloud.rule": "Host(`cloud.piratenpartei.ch`)"
+     "traefik.http.routers.nextcloud.tls": "true"
+     "traefik.http.routers.nextcloud.tls.certresolver": "le"
     state: started
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-proxy
+      - name: net-nextcloud
     restart_policy: always
     links:
       - nextcloud-mysql:mysql
@@ -70,6 +89,9 @@
     entrypoint: /cron.sh
     state: started
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-nextcloud
     restart_policy: always
     links:
       - nextcloud-mysql:mysql
@@ -104,6 +126,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-nextcloud
     volumes:
       - /var/srv/mysql/onlyoffice:/var/lib/mysql:Z
     env:
@@ -122,6 +147,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-nextcloud
     env:
       RABBITMQ_DEFAULT_USER=onlyoffice
       RABBITMQ_DEFAULT_PASS="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/rabbitmq/password:value') }}"
@@ -134,8 +162,14 @@
     labels:
      "traefik.enable": "true"
      "traefik.http.routers.nextcloud-office.rule": "Host(`office.piratenpartei.ch`)"
+     "traefik.http.routers.nextcloud-office.tls": "true"
+     "traefik.http.routers.nextcloud-office.tls.certresolver": "le"
     state: started
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-proxy
+      - name: net-nextcloud
     restart_policy: always
     links:
       - nextcloud:nextcloud
@@ -160,6 +194,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-nextcloud
     links:
       - nextcloud-mysql:mysql
     volumes:
@@ -177,6 +214,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-nextcloud
     links:
       - onlyoffice-mariadb:mysql
     volumes:

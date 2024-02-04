@@ -1,3 +1,10 @@
+- name: Create press-crm network
+  become: true
+  docker_network:
+    name: net-press-crm
+    attachable: yes
+    internal: yes
+
 - name: start mysql container
   become: true
   docker_container:
@@ -6,6 +13,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-press-crm
     ulimits: nofile:4096:32768
     volumes:
       - /var/srv/mysql/press-crm:/var/lib/mysql:Z
@@ -24,6 +34,9 @@
     name: "press-crm-mysql-civi"
     state: started
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-press-crm
     ulimits: nofile:4096:32768
     restart_policy: always
     volumes:
@@ -44,8 +57,15 @@
     restart_policy: always
     labels:
      "traefik.enable": "true"
+     "traefik.http.routers.presscivi.rule": "Host(`press-crm.piratenpartei.ch`)"
+     "traefik.http.routers.presscivi.tls": "true"
+     "traefik.http.routers.presscivi.tls.certresolver": "le"
     state: started
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-proxy
+      - name: net-press-crm
     links:
       - press-crm-mysql:mysql
       - press-crm-mysql-civi:mysql-civi
@@ -63,6 +83,9 @@
     name: "press-crm-cron"
     state: started
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-press-crm
     restart_policy: always
     links:
       - press-crm-mysql:mysql
@@ -84,6 +107,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-press-crm
     links:
       - press-crm-mysql:mysql
     volumes:
@@ -101,6 +127,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-press-crm
     links:
       - press-crm-mysql-civi:mysql
     volumes:

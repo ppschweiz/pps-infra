@@ -1,3 +1,11 @@
+- name: Create Mumble network
+  become: true
+  docker_network:
+    name: net-mumble
+    attachable: yes
+    internal: yes
+
+
 - name: Create directory /var/srv/ssl if it does not exist
   become: true
   file:
@@ -34,6 +42,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-mumble
     ulimits: nofile:4096:32768
     volumes:
       - /var/srv/mysql/mumble:/var/lib/mysql:Z
@@ -53,8 +64,15 @@
     restart_policy: always
     labels:
      "traefik.enable": "false"
+     "traefik.http.routers.mumble.rule": "Host(`talk.piratenpartei.ch`)"
+     "traefik.http.routers.mumble.tls": "true"
+     "traefik.http.routers.mumble.tls.certresolver": "le"
     state: started
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-proxy
+      - name: net-mumble
     links:
       - mumble-mariadb:mysql
     volumes:
@@ -85,6 +103,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-mumble
     links:
       - mumble-mariadb:mysql
     volumes:
