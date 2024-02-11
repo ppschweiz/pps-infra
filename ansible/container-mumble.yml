@@ -36,7 +36,7 @@
 
 - name: dumpcerts for Mumble
   become: true
-  command: jq -r '.le.Certificates[] | select(.domain.main=="talk.piratenpartei.ch") | .{{ item.type }}' /var/srv/traefik/acme.json | base64 -d > /var/srv/ssl/{{ item.subdirectory }}/talk.piratenpartei.ch.{{ item.extension }};
+  shell: jq -r '.le.Certificates[] | select(.domain.main=="talk.piratenpartei.ch") | .{{ item.type }}' /var/srv/traefik/acme.json | base64 -d > /var/srv/ssl/{{ item.subdirectory }}/talk.piratenpartei.ch.{{ item.extension }};
   with_items:
   - { type: certificate, extension: crt, subdirectory: certs } 
   - { type: key, extension: key, subdirectory: private }
