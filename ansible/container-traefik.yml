@@ -14,7 +14,7 @@
 - name: Traefik hsts-middleware
   become: true
   copy:
-    src: files/tls-middlewares.yml
+    src: files/traefik/tls-middlewares.yml
     dest: /var/srv/traefik/config/tls-middlewares.yml
     mode: '0644'
 
