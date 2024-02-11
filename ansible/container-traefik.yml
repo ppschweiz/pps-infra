@@ -15,7 +15,7 @@
   become: true
   copy:
     src: files/tls-middlewares.yml
-    dest: /var/srv/traefik/config/tls-middlewares
+    dest: /var/srv/traefik/config/tls-middlewares.yml
     mode: '0644'
 
 - name: Traefik
@@ -28,6 +28,8 @@
     ports:
       - "[::]:443:443"
       - "0.0.0.0:443:443"
+      - "[::]:443:443/udp"
+      - "0.0.0.0:443:443/udp"
       - "[::]:80:80"
       - "0.0.0.0:80:80"
     networks_cli_compatible: yes
@@ -37,6 +39,5 @@
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:z
       - /var/srv/traefik/traefik.toml:/traefik.toml:ro,Z
+      - /var/srv/traefik/config:/config:ro,Z
       - /var/srv/traefik/acme.json:/var/lib/traefik/acme.json:Z
-    env:
-      GODEBUG=tls13=1

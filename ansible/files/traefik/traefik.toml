@@ -24,7 +24,7 @@
   network = "net-proxy"
   exposedByDefault = false
 [providers.file]
-  directory: /var/lib/traefik/config
+  directory: /config
   watch: true
 
 
