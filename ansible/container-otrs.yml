@@ -35,6 +35,7 @@
     restart_policy: always
     labels:
      "traefik.enable": "true"
+     "traefik.entryPoint": "https"
      "traefik.http.routers.otrs.rule": "Host(`info.piratenpartei.ch`)"
      "traefik.http.routers.otrs.tls": "true"
      "traefik.http.routers.otrs.tls.certresolver": "le"
