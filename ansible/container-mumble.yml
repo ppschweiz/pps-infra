@@ -111,6 +111,6 @@
       MYSQL_HOST="mumble-mariadb"
       MYSQL_PORT=3306
       MYSQL_USER="mumble"
-      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
+      MYSQL_ENV_MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y

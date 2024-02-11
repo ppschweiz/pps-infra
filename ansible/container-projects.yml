@@ -80,6 +80,6 @@
       MYSQL_HOST="projects-mariadb"
       MYSQL_PORT=3306
       MYSQL_USER="projects"
-      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
+      MYSQL_ENV_MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y

@@ -195,7 +195,7 @@
       MYSQL_HOST="nextcloud-mysql"
       MYSQL_PORT=3306
       MYSQL_USER="nextcloud"
-      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
+      MYSQL_ENV_MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y
 
@@ -216,6 +216,6 @@
       MYSQL_HOST="onlyoffice-mariadb"
       MYSQL_PORT=3306
       MYSQL_USER="onlyoffice"
-      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/mariadb/password:value') }}"
+      MYSQL_ENV_MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/mariadb/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y

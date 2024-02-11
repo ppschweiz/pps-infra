@@ -114,7 +114,7 @@
       MYSQL_HOST="members-crm-mysql"
       MYSQL_PORT=3306
       MYSQL_USER="members-crm"
-      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
+      MYSQL_ENV_MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y
 
@@ -135,6 +135,6 @@
       MYSQL_HOST="members-crm-mysql-civi"
       MYSQL_PORT=3306
       MYSQL_USER="members-crm"
-      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
+      MYSQL_ENV_MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y
