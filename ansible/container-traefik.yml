@@ -25,7 +25,6 @@
       - "0.0.0.0:80:80"
     networks_cli_compatible: yes
     networks:
-      - name: bridge # legacy
       - name: net-proxy
     state: started
     volumes:

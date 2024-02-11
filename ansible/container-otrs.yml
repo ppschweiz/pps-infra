@@ -44,7 +44,6 @@
     networks_cli_compatible: yes
     networks:
       - name: net-otrs
-      - name: bridge
     volumes:
       - /var/srv/files/otrs/gnupg:/opt/otrs/.gnupg:Z
       - /var/srv/files/otrs/article:/opt/otrs/var/article:Z
