@@ -1,0 +1,9 @@
+http:
+  routers:
+    mumble-router:
+      rule: "Host(`talk.piratenpartei.ch`)"
+      entryPoints:
+        - "https"
+      tls:
+        certresolver: le
+      service: noop@internal

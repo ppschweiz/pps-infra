@@ -27,6 +27,13 @@
     state: directory
     mode: '0700'
 
+- name: Mumble traefik conf
+  become: true
+  copy:
+    src: files/traefik/mumble.yml
+    dest: /var/srv/traefik/config/mumble.yml
+    mode: '0644'
+
 - name: dumpcerts for Mumble
   become: true
   command: jq -r '.le.Certificates[] | select(.domain.main=="talk.piratenpartei.ch") | .{{ item.type }}' /var/srv/traefik/acme.json | base64 -d > /var/srv/ssl/{{ item.subdirectory }}/talk.piratenpartei.ch.{{ item.extension }};
@@ -62,12 +69,6 @@
     image: ghcr.io/ppschweiz/docker-mumble:master
     name: "mumble"
     restart_policy: always
-    labels:
-     "traefik.enable": "false"
-     "traefik.entryPoint": "https"
-     "traefik.http.routers.mumble.rule": "Host(`talk.piratenpartei.ch`)"
-     "traefik.http.routers.mumble.tls": "true"
-     "traefik.http.routers.mumble.tls.certresolver": "le"
     state: started
     pull: True
     networks_cli_compatible: yes
