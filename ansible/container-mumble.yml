@@ -1,20 +1,45 @@
-- name: copy dumpcerts.sh
+- name: Create Mumble network
   become: true
-  copy:
-    src: files/dumpcerts.sh
-    dest: /var/srv/dumpcerts.sh
-    mode: '0755'
+  docker_network:
+    name: net-mumble
+    attachable: yes
+    internal: yes
 
-- name: Create a directory if it does not exist
+
+- name: Create directory /var/srv/ssl if it does not exist
   become: true
   file:
     path: /var/srv/ssl
     state: directory
     mode: '0755'
 
+- name: Create directory /var/srv/ssl/certs directory and set permissions
+  become: true
+  file:
+    path: /var/srv/ssl/certs
+    state: directory
+    mode: '0755'
+
+- name: Create directory /var/srv/ssl/private and set permissions
+  become: true
+  file:
+    path: /var/srv/ssl/private
+    state: directory
+    mode: '0700'
+
+- name: Mumble traefik conf
+  become: true
+  copy:
+    src: files/traefik/mumble.yml
+    dest: /var/srv/traefik/config/mumble.yml
+    mode: '0644'
+
 - name: dumpcerts for Mumble
   become: true
-  command: /var/srv/dumpcerts.sh /var/srv/traefik/acme.json /var/srv/ssl/
+  shell: jq -r '.le.Certificates[] | select(.domain.main=="talk.piratenpartei.ch") | .{{ item.type }}' /var/srv/traefik/acme.json | base64 -d > /var/srv/ssl/{{ item.subdirectory }}/talk.piratenpartei.ch.{{ item.extension }};
+  with_items:
+  - { type: certificate, extension: crt, subdirectory: certs } 
+  - { type: key, extension: key, subdirectory: private }
 
 - name: start mariadb container
   become: true
@@ -24,6 +49,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-mumble
     ulimits: nofile:4096:32768
     volumes:
       - /var/srv/mysql/mumble:/var/lib/mysql:Z
@@ -41,12 +69,12 @@
     image: ghcr.io/ppschweiz/docker-mumble:master
     name: "mumble"
     restart_policy: always
-    labels:
-     "traefik.enable": "false"
     state: started
     pull: True
-    links:
-      - mumble-mariadb:mysql
+    networks_cli_compatible: yes
+    networks:
+      - name: net-proxy
+      - name: net-mumble
     volumes:
       - /var/srv/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro,Z
       - /var/srv/ssl/private/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
@@ -56,7 +84,7 @@
       - "[::]:64738:64738/udp"
       - "0.0.0.0:64738:64738/udp"
     env:
-      MYSQL_HOST="mysql"
+      MYSQL_HOST="mumble-mariadb"
       MYSQL_USER="mumble"
       MYSQL_DATABASE="mumble"
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
@@ -75,11 +103,15 @@
     state: started
     restart_policy: always
     pull: True
-    links:
-      - mumble-mariadb:mysql
+    networks_cli_compatible: yes
+    networks:
+      - name: net-mumble
     volumes:
       - /var/srv/mysql-backup/mumble:/backup:Z
     env:
-      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
+      MYSQL_HOST="mumble-mariadb"
+      MYSQL_PORT=3306
+      MYSQL_USER="mumble"
+      MYSQL_ENV_MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y

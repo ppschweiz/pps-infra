@@ -1,3 +1,10 @@
+- name: Create Redmine network
+  become: true
+  docker_network:
+    name: net-redmine
+    attachable: yes
+    internal: yes
+
 - name: start mariadb container
   become: true
   docker_container:
@@ -6,6 +13,9 @@
     state: started
     restart_policy: always
     pull: True
+    networks_cli_compatible: yes
+    networks:
+      - name: net-redmine
     ulimits: nofile:4096:32768
     volumes:
       - /var/srv/mysql/projects:/var/lib/mysql:Z
@@ -32,17 +42,24 @@
     restart_policy: always
     labels:
      "traefik.enable": "true"
+     "traefik.entryPoint": "https"
+     "traefik.http.routers.redmine.rule": "Host(`projects.piratenpartei.ch`)"
+     "traefik.http.routers.redmine.tls": "true"
+     "traefik.http.routers.redmine.tls.certresolver": "le"
+     "traefik.http.routers.redmine.middlewares": "security-headers@file"
     state: started
     pull: True
-    links:
-      - projects-mariadb:mysql
+    networks_cli_compatible: yes
+    networks:
+      - name: net-proxy
+      - name: net-redmine
     volumes:
       - /var/srv/files/projects/configuration.yml:/usr/src/redmine/config/configuration.yml:ro,Z
       - /var/srv/files/projects/files:/usr/src/redmine/files:Z
       - /var/srv/files/projects/themes/PurpleMine2:/usr/src/redmine/public/themes/PurpleMine2:ro,Z
     env:
       REDMINE_DB_DATABASE="projects"
-      REDMINE_DB_MYSQL="mysql"
+      REDMINE_DB_MYSQL="projects-mariadb"
       REDMINE_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
       REDMINE_DB_USERNAME="projects"
       REDMINE_PLUGINS_MIGRATE=true
@@ -55,11 +72,15 @@
     state: started
     restart_policy: always
     pull: True
-    links:
-      - projects-mariadb:mysql
+    networks_cli_compatible: yes
+    networks:
+      - name: net-redmine
     volumes:
       - /var/srv/mysql-backup/projects:/backup:Z
     env:
-      MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
+      MYSQL_HOST="projects-mariadb"
+      MYSQL_PORT=3306
+      MYSQL_USER="projects"
+      MYSQL_ENV_MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y

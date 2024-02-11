@@ -1,4 +1,4 @@
-- name: Create OTRS network network
+- name: Create OTRS network
   become: true
   docker_network:
     name: net-otrs
@@ -35,13 +35,17 @@
     restart_policy: always
     labels:
      "traefik.enable": "true"
-     "traefik.frontend.rule": "Host:info.piratenpartei.ch"
+     "traefik.entryPoint": "https"
+     "traefik.http.routers.otrs.rule": "Host(`info.piratenpartei.ch`)"
+     "traefik.http.routers.otrs.tls": "true"
+     "traefik.http.routers.otrs.tls.certresolver": "le"
+     "traefik.http.routers.otrs.middlewares": "security-headers@file"
     state: started
     pull: True
     networks_cli_compatible: yes
     networks:
       - name: net-otrs
-      - name: bridge
+      - name: net-proxy
     volumes:
       - /var/srv/files/otrs/gnupg:/opt/otrs/.gnupg:Z
       - /var/srv/files/otrs/article:/opt/otrs/var/article:Z

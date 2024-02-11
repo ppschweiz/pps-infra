@@ -1,0 +1,41 @@
+[global]
+  sendAnonymousUsage = false
+
+[log]
+  level = "ERROR"
+
+[entryPoints.http]
+  address = ":80"
+  [entryPoints.http.http.redirections.entryPoint]
+    to = "https"
+    scheme = "https"
+    permanent = true
+[entryPoints.https]
+  address = ":443"
+  [entryPoints.https.http3]
+  [entryPoints.https.http.tls]
+    certResolver = "le"
+
+[tls.options.default]
+  minVersion = "VersionTLS12"
+  sniStrict = true
+
+[providers.docker]
+  network = "net-proxy"
+  exposedByDefault = false
+[providers.file]
+  directory = "/config"
+  watch = true
+
+
+[certificatesResolvers.le.acme]
+  email = "admin@piratenpartei.ch"
+  storage = "/var/lib/traefik/acme.json"
+  [certificatesResolvers.le.acme.httpChallenge]
+    entryPoint = "http"
+
+[experimental]
+  http3 = true
+
+[api]
+  dashboard = false
