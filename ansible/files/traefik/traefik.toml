@@ -24,8 +24,8 @@
   network = "net-proxy"
   exposedByDefault = false
 [providers.file]
-  directory: /config
-  watch: true
+  directory = "/config"
+  watch = true
 
 
 [certificatesResolvers.le.acme]
