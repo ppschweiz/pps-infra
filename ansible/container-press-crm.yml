@@ -67,12 +67,10 @@
     networks:
       - name: net-proxy
       - name: net-press-crm
-    links:
-      - press-crm-mysql:mysql
-      - press-crm-mysql-civi:mysql-civi
     volumes:
       - /var/srv/files/press-crm:/var/www/html:z
     env:
+      WORDPRESS_DB_HOST="press-crm-mysql"
       WORDPRESS_DB_NAME="press-crm"
       WORDPRESS_DB_USER="press-crm"
       WORDPRESS_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
@@ -88,14 +86,12 @@
     networks:
       - name: net-press-crm
     restart_policy: always
-    links:
-      - press-crm-mysql:mysql
-      - press-crm-mysql-civi:mysql-civi
     volumes:
       - /var/srv/files/press-crm:/var/www/html:z
     command: /var/www/html/startjobs.sh
     user: "33"
     env:
+      WORDPRESS_DB_HOST="press-crm-mysql"
       WORDPRESS_DB_NAME="press-crm"
       WORDPRESS_DB_USER="press-crm"
       WORDPRESS_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
@@ -111,11 +107,12 @@
     networks_cli_compatible: yes
     networks:
       - name: net-press-crm
-    links:
-      - press-crm-mysql:mysql
     volumes:
       - /var/srv/mysql-backup/press-crm:/backup:Z
     env:
+      MYSQL_HOST="press-crm-mysql"
+      MYSQL_PORT=3306
+      MYSQL_USER="press-crm"
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y
@@ -131,11 +128,12 @@
     networks_cli_compatible: yes
     networks:
       - name: net-press-crm
-    links:
-      - press-crm-mysql-civi:mysql
     volumes:
       - /var/srv/mysql-backup/press-crm-civi:/backup:Z
     env:
+      MYSQL_HOST="press-crm-mysql-civi"
+      MYSQL_PORT=3306
+      MYSQL_USER="press-crm"
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/press-crm/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y

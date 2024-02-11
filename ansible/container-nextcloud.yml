@@ -57,9 +57,6 @@
       - name: net-proxy
       - name: net-nextcloud
     restart_policy: always
-    links:
-      - nextcloud-mysql:mysql
-      - nextcloud-redis:redis
     volumes:
       - /var/srv/files/nextcloud/html:/var/www/html:z
       - /var/srv/files/nextcloud/data:/srv/data:z
@@ -68,11 +65,11 @@
       NEXTCLOUD_UPDATE=1
       NEXTCLOUD_ADMIN_USER="admin"
       NEXTCLOUD_ADMIN_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/nextcloud/admin-pw/password:value') }}"
-      MYSQL_HOST=mysql
+      MYSQL_HOST=nextcloud-mysql
       MYSQL_USER=nextcloud
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
       MYSQL_DATABASE=nextcloud
-      REDIS_HOST=redis
+      REDIS_HOST=nextcloud-redis
       MAIL_DOMAIN="piratenpartei.ch"
       MAIL_FROM_ADDRESS="cloud"
       SMTP_AUTHTYPE="login"
@@ -94,9 +91,6 @@
     networks:
       - name: net-nextcloud
     restart_policy: always
-    links:
-      - nextcloud-mysql:mysql
-      - nextcloud-redis:redis
     volumes:
       - /var/srv/files/nextcloud/html:/var/www/html:z
       - /var/srv/files/nextcloud/data:/srv/data:z
@@ -105,11 +99,11 @@
       NEXTCLOUD_UPDATE=1
       NEXTCLOUD_ADMIN_USER=admin
       NEXTCLOUD_ADMIN_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/nextcloud/admin-pw/password:value') }}"
-      MYSQL_HOST=mysql
+      MYSQL_HOST=nextcloud-mysql
       MYSQL_USER=nextcloud
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
       MYSQL_DATABASE=nextcloud
-      REDIS_HOST=redis
+      REDIS_HOST=nextcloud-redis
       MAIL_DOMAIN="piratenpartei.ch"
       MAIL_FROM_ADDRESS="cloud"
       SMTP_AUTHTYPE="login"
@@ -173,10 +167,6 @@
       - name: net-proxy
       - name: net-nextcloud
     restart_policy: always
-    links:
-      - nextcloud:nextcloud
-      - onlyoffice-mariadb:onlyoffice-mariadb
-      - onlyoffice-rabbitmq:onlyoffice-rabbitmq
     env:
       DB_TYPE=mariadb
       DB_HOST=onlyoffice-mariadb
@@ -199,11 +189,12 @@
     networks_cli_compatible: yes
     networks:
       - name: net-nextcloud
-    links:
-      - nextcloud-mysql:mysql
     volumes:
       - /var/srv/mysql-backup/nextcloud:/backup:Z
     env:
+      MYSQL_HOST="nextcloud-mysql"
+      MYSQL_PORT=3306
+      MYSQL_USER="nextcloud"
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/nextcloud/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y
@@ -219,11 +210,12 @@
     networks_cli_compatible: yes
     networks:
       - name: net-nextcloud
-    links:
-      - onlyoffice-mariadb:mysql
     volumes:
       - /var/srv/mysql-backup/onlyoffice:/backup:Z
     env:
+      MYSQL_HOST="onlyoffice-mariadb"
+      MYSQL_PORT=3306
+      MYSQL_USER="onlyoffice"
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/onlyoffice/mariadb/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y

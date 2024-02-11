@@ -74,8 +74,6 @@
     networks:
       - name: net-proxy
       - name: net-mumble
-    links:
-      - mumble-mariadb:mysql
     volumes:
       - /var/srv/ssl/certs/talk.piratenpartei.ch.crt:/tls/talk.piratenpartei.ch.crt:ro,Z
       - /var/srv/ssl/private/talk.piratenpartei.ch.key:/tls/talk.piratenpartei.ch.key:ro
@@ -85,7 +83,7 @@
       - "[::]:64738:64738/udp"
       - "0.0.0.0:64738:64738/udp"
     env:
-      MYSQL_HOST="mysql"
+      MYSQL_HOST="mumble-mariadb"
       MYSQL_USER="mumble"
       MYSQL_DATABASE="mumble"
       MYSQL_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
@@ -107,11 +105,12 @@
     networks_cli_compatible: yes
     networks:
       - name: net-mumble
-    links:
-      - mumble-mariadb:mysql
     volumes:
       - /var/srv/mysql-backup/mumble:/backup:Z
     env:
+      MYSQL_HOST="mumble-mariadb"
+      MYSQL_PORT=3306
+      MYSQL_USER="mumble"
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/mumble/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y

@@ -52,15 +52,13 @@
     networks:
       - name: net-proxy
       - name: net-redmine
-    links:
-      - projects-mariadb:mysql
     volumes:
       - /var/srv/files/projects/configuration.yml:/usr/src/redmine/config/configuration.yml:ro,Z
       - /var/srv/files/projects/files:/usr/src/redmine/files:Z
       - /var/srv/files/projects/themes/PurpleMine2:/usr/src/redmine/public/themes/PurpleMine2:ro,Z
     env:
       REDMINE_DB_DATABASE="projects"
-      REDMINE_DB_MYSQL="mysql"
+      REDMINE_DB_MYSQL="projects-mariadb"
       REDMINE_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
       REDMINE_DB_USERNAME="projects"
       REDMINE_PLUGINS_MIGRATE=true
@@ -76,11 +74,12 @@
     networks_cli_compatible: yes
     networks:
       - name: net-redmine
-    links:
-      - projects-mariadb:mysql
     volumes:
       - /var/srv/mysql-backup/projects:/backup:Z
     env:
+      MYSQL_HOST="projects-mariadb"
+      MYSQL_PORT=3306
+      MYSQL_USER="projects"
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/projects/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y

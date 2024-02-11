@@ -68,12 +68,10 @@
     networks:
       - name: net-proxy
       - name: net-members-crm
-    links:
-      - members-crm-mysql:mysql
-      - members-crm-mysql-civi:mysql-civi
     volumes:
       - /var/srv/files/members-crm:/var/www/html:z
     env:
+      WORDPRESS_DB_HOST="members-crm-mysql"
       WORDPRESS_DB_NAME="members-crm"
       WORDPRESS_DB_USER="members-crm"
       WORDPRESS_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
@@ -89,14 +87,12 @@
     networks:
       - name: net-members-crm
     restart_policy: always
-    links:
-      - members-crm-mysql:mysql
-      - members-crm-mysql-civi:mysql-civi
     volumes:
       - /var/srv/files/members-crm:/var/www/html:z
     command: /var/www/html/startjobs.sh
     user: "33"
     env:
+      WORDPRESS_DB_HOST="members-crm-mysql"
       WORDPRESS_DB_NAME="members-crm"
       WORDPRESS_DB_USER="members-crm"
       WORDPRESS_DB_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
@@ -112,11 +108,12 @@
     networks_cli_compatible: yes
     networks:
       - name: net-members-crm
-    links:
-      - members-crm-mysql:mysql
     volumes:
       - /var/srv/mysql-backup/members-crm:/backup:Z
     env:
+      MYSQL_HOST="members-crm-mysql"
+      MYSQL_PORT=3306
+      MYSQL_USER="members-crm"
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y
@@ -132,11 +129,12 @@
     networks_cli_compatible: yes
     networks:
       - name: net-members-crm
-    links:
-      - members-crm-mysql-civi:mysql
     volumes:
       - /var/srv/mysql-backup/members-crm-civi:/backup:Z
     env:
+      MYSQL_HOST="members-crm-mysql-civi"
+      MYSQL_PORT=3306
+      MYSQL_USER="members-crm"
       MYSQL_PASS="{{ lookup('hashi_vault', 'secret=secret/members-crm/mysql/password:value') }}"
       MAX_BACKUPS=3
       COMPRESS=y
