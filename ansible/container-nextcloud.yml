@@ -50,6 +50,11 @@
      "traefik.http.routers.nextcloud.rule": "Host(`cloud.piratenpartei.ch`)"
      "traefik.http.routers.nextcloud.tls": "true"
      "traefik.http.routers.nextcloud.tls.certresolver": "le"
+     "traefik.http.routers.nextcloud.middlewares": "nc"
+     "traefik.http.middlewares.nc.chain.middlewares": "security-headers@file,nextcloud_redirectregex"
+     "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.permanent": "true"
+     "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.regex": "https://(.*)/.well-known/(?:card|cal)dav"
+     "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.replacement": "https://$${1}/remote.php/dav"
     state: started
     pull: True
     networks_cli_compatible: yes
@@ -160,6 +165,7 @@
      "traefik.http.routers.nextcloud-office.rule": "Host(`office.piratenpartei.ch`)"
      "traefik.http.routers.nextcloud-office.tls": "true"
      "traefik.http.routers.nextcloud-office.tls.certresolver": "le"
+     "traefik.http.routers.nextcloud-office.middlewares": "security-headers@file"
     state: started
     pull: True
     networks_cli_compatible: yes

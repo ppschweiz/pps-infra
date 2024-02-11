@@ -23,6 +23,10 @@
 [providers.docker]
   network = "net-proxy"
   exposedByDefault = false
+[providers.file]
+  directory: /var/lib/traefik/config
+  watch: true
+
 
 [certificatesResolvers.le.acme]
   email = "admin@piratenpartei.ch"

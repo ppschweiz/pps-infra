@@ -61,6 +61,7 @@
      "traefik.http.routers.presscivi.rule": "Host(`press-crm.piratenpartei.ch`)"
      "traefik.http.routers.presscivi.tls": "true"
      "traefik.http.routers.presscivi.tls.certresolver": "le"
+     "traefik.http.routers.presscivi.middlewares": "security-headers@file"
     state: started
     pull: True
     networks_cli_compatible: yes

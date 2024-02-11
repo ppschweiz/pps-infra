@@ -46,6 +46,7 @@
      "traefik.http.routers.redmine.rule": "Host(`projects.piratenpartei.ch`)"
      "traefik.http.routers.redmine.tls": "true"
      "traefik.http.routers.redmine.tls.certresolver": "le"
+     "traefik.http.routers.redmine.middlewares": "security-headers@file"
     state: started
     pull: True
     networks_cli_compatible: yes

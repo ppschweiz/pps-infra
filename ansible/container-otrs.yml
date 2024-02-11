@@ -39,6 +39,7 @@
      "traefik.http.routers.otrs.rule": "Host(`info.piratenpartei.ch`)"
      "traefik.http.routers.otrs.tls": "true"
      "traefik.http.routers.otrs.tls.certresolver": "le"
+     "traefik.http.routers.otrs.middlewares": "security-headers@file"
     state: started
     pull: True
     networks_cli_compatible: yes

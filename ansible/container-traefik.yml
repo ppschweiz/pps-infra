@@ -7,8 +7,15 @@
 - name: Traefik config
   become: true
   copy:
-    src: files/traefik.toml
+    src: files/traefik/traefik.toml
     dest: /var/srv/traefik/traefik.toml
+    mode: '0644'
+
+- name: Traefik hsts-middleware
+  become: true
+  copy:
+    src: files/tls-middlewares.yml
+    dest: /var/srv/traefik/config/tls-middlewares
     mode: '0644'
 
 - name: Traefik
