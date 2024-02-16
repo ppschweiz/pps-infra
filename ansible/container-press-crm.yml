@@ -1,9 +1,10 @@
+---
 - name: Create press-crm network
   become: true
   docker_network:
     name: net-press-crm
-    attachable: yes
-    internal: yes
+    attachable: true
+    internal: true
 
 - name: start mysql container
   become: true
@@ -12,8 +13,8 @@
     name: "press-crm-mysql"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-press-crm
     ulimits: nofile:4096:32768
@@ -33,8 +34,8 @@
     image: "mariadb:10.6"
     name: "press-crm-mysql-civi"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-press-crm
     ulimits: nofile:4096:32768
@@ -56,15 +57,15 @@
     name: "press-crm"
     restart_policy: always
     labels:
-     "traefik.enable": "true"
-     "traefik.entryPoint": "https"
-     "traefik.http.routers.presscivi.rule": "Host(`press-crm.piratenpartei.ch`)"
-     "traefik.http.routers.presscivi.tls": "true"
-     "traefik.http.routers.presscivi.tls.certresolver": "le"
-     "traefik.http.routers.presscivi.middlewares": "security-headers@file"
+      "traefik.enable": "true"
+      "traefik.entryPoint": "https"
+      "traefik.http.routers.presscivi.rule": "Host(`press-crm.piratenpartei.ch`)"
+      "traefik.http.routers.presscivi.tls": "true"
+      "traefik.http.routers.presscivi.tls.certresolver": "le"
+      "traefik.http.routers.presscivi.middlewares": "security-headers@file"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-proxy
       - name: net-press-crm
@@ -82,8 +83,8 @@
     image: "wordpress:cli-php8.1"
     name: "press-crm-cron"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-press-crm
     restart_policy: always
@@ -104,8 +105,8 @@
     name: "press-crm-backup"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-press-crm
     volumes:
@@ -125,8 +126,8 @@
     name: "press-crm-civi-backup"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-press-crm
     volumes:

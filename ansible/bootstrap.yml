@@ -1,4 +1,4 @@
 ---
 - name: Install Python modules for Ansible
-  become: yes
+  become: true
   command: /usr/bin/rpm-ostree install python3-docker

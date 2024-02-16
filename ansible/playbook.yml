@@ -1,3 +1,4 @@
+---
 #- import_playbook: bootstrap.yml
 - import_playbook: users.yml
 - import_playbook: docker.yml

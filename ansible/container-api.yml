@@ -1,3 +1,4 @@
+---
 - name: api
   become: true
   docker_container:
@@ -11,8 +12,8 @@
     image: "ppschweiz/pps-api"
     name: "api"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-proxy
     restart_policy: always

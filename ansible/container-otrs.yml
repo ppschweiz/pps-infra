@@ -1,9 +1,10 @@
+---
 - name: Create OTRS network
   become: true
   docker_network:
     name: net-otrs
-    attachable: yes
-    internal: yes
+    attachable: true
+    internal: true
 
 - name: start OTRS mysql container
   become: true
@@ -12,9 +13,9 @@
     name: "otrs-mysql"
     state: started
     restart_policy: always
-    pull: True
+    pull: true
     ulimits: nofile:4096:32768
-    networks_cli_compatible: yes
+    networks_cli_compatible: true
     networks:
       - name: net-otrs
     volumes:
@@ -34,15 +35,15 @@
     name: "otrs"
     restart_policy: always
     labels:
-     "traefik.enable": "true"
-     "traefik.entryPoint": "https"
-     "traefik.http.routers.otrs.rule": "Host(`info.piratenpartei.ch`)"
-     "traefik.http.routers.otrs.tls": "true"
-     "traefik.http.routers.otrs.tls.certresolver": "le"
-     "traefik.http.routers.otrs.middlewares": "security-headers@file"
+      "traefik.enable": "true"
+      "traefik.entryPoint": "https"
+      "traefik.http.routers.otrs.rule": "Host(`info.piratenpartei.ch`)"
+      "traefik.http.routers.otrs.tls": "true"
+      "traefik.http.routers.otrs.tls.certresolver": "le"
+      "traefik.http.routers.otrs.middlewares": "security-headers@file"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-otrs
       - name: net-proxy
@@ -68,8 +69,8 @@
     name: "otrs-backup"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-otrs
     volumes:

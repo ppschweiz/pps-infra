@@ -1,3 +1,4 @@
+---
 - name: Create Users
   hosts: coreos
   tasks:

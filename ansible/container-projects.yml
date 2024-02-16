@@ -1,9 +1,10 @@
+---
 - name: Create Redmine network
   become: true
   docker_network:
     name: net-redmine
-    attachable: yes
-    internal: yes
+    attachable: true
+    internal: true
 
 - name: start mariadb container
   become: true
@@ -12,8 +13,8 @@
     name: "projects-mariadb"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-redmine
     ulimits: nofile:4096:32768
@@ -41,15 +42,15 @@
     name: "projects"
     restart_policy: always
     labels:
-     "traefik.enable": "true"
-     "traefik.entryPoint": "https"
-     "traefik.http.routers.redmine.rule": "Host(`projects.piratenpartei.ch`)"
-     "traefik.http.routers.redmine.tls": "true"
-     "traefik.http.routers.redmine.tls.certresolver": "le"
-     "traefik.http.routers.redmine.middlewares": "security-headers@file"
+      "traefik.enable": "true"
+      "traefik.entryPoint": "https"
+      "traefik.http.routers.redmine.rule": "Host(`projects.piratenpartei.ch`)"
+      "traefik.http.routers.redmine.tls": "true"
+      "traefik.http.routers.redmine.tls.certresolver": "le"
+      "traefik.http.routers.redmine.middlewares": "security-headers@file"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-proxy
       - name: net-redmine
@@ -71,8 +72,8 @@
     name: "projects-backup"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-redmine
     volumes:

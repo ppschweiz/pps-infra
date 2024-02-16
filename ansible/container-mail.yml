@@ -1,3 +1,4 @@
+---
 - name: Outbound-Mail
   become: true
   docker_container:

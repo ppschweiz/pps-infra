@@ -1,9 +1,10 @@
+---
 - name: Create Mumble network
   become: true
   docker_network:
     name: net-mumble
-    attachable: yes
-    internal: yes
+    attachable: true
+    internal: true
 
 
 - name: Create directory /var/srv/ssl if it does not exist
@@ -38,8 +39,8 @@
   become: true
   shell: jq -r '.le.Certificates[] | select(.domain.main=="talk.piratenpartei.ch") | .{{ item.type }}' /var/srv/traefik/acme.json | base64 -d > /var/srv/ssl/{{ item.subdirectory }}/talk.piratenpartei.ch.{{ item.extension }};
   with_items:
-  - { type: certificate, extension: crt, subdirectory: certs } 
-  - { type: key, extension: key, subdirectory: private }
+    - {type: certificate, extension: crt, subdirectory: certs}
+    - {type: key, extension: key, subdirectory: private}
 
 - name: start mariadb container
   become: true
@@ -48,8 +49,8 @@
     name: "mumble-mariadb"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-mumble
     ulimits: nofile:4096:32768
@@ -70,8 +71,8 @@
     name: "mumble"
     restart_policy: always
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-proxy
       - name: net-mumble
@@ -102,8 +103,8 @@
     name: "mumble-backup"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-mumble
     volumes:

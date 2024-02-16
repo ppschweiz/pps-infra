@@ -1,8 +1,9 @@
+---
 - name: Create Proxy/Traefik network
   become: true
   docker_network:
     name: net-proxy
-    attachable: yes
+    attachable: true
 
 - name: Traefik config
   become: true
@@ -23,7 +24,7 @@
   docker_container:
     image: "traefik:v2.10"
     restart_policy: always
-    pull: True
+    pull: true
     name: "traefik"
     ports:
       - "[::]:443:443"
@@ -32,7 +33,7 @@
       - "0.0.0.0:443:443/udp"
       - "[::]:80:80"
       - "0.0.0.0:80:80"
-    networks_cli_compatible: yes
+    networks_cli_compatible: true
     networks:
       - name: net-proxy
     state: started

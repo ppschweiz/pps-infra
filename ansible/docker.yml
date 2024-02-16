@@ -1,3 +1,4 @@
+---
 - name: Docker configuration
   hosts: coreos
   tasks:
@@ -5,7 +6,7 @@
       become: true
       systemd:
         state: started
-        enabled: yes
+        enabled: true
         name: docker.service
     - import_tasks: container-traefik.yml
     - import_tasks: container-api.yml

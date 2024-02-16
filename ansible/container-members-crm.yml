@@ -1,9 +1,10 @@
+---
 - name: Create Members-crm network
   become: true
   docker_network:
     name: net-members-crm
-    attachable: yes
-    internal: yes
+    attachable: true
+    internal: true
 
 
 - name: start mysql container
@@ -13,8 +14,8 @@
     name: "members-crm-mysql"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-members-crm
     ulimits: nofile:4096:32768
@@ -34,8 +35,8 @@
     image: "mariadb:10.6"
     name: "members-crm-mysql-civi"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-members-crm
     ulimits: nofile:4096:32768
@@ -57,15 +58,15 @@
     name: "members-crm"
     restart_policy: always
     labels:
-     "traefik.enable": "true"
-     "traefik.entryPoint": "https"
-     "traefik.http.routers.memberscivi.rule": "Host(`members-crm.piratenpartei.ch`)"
-     "traefik.http.routers.memberscivi.tls": "true"
-     "traefik.http.routers.memberscivi.tls.certresolver": "le"
-     "traefik.http.routers.memberscivi.middlewares": "security-headers@file"
+      "traefik.enable": "true"
+      "traefik.entryPoint": "https"
+      "traefik.http.routers.memberscivi.rule": "Host(`members-crm.piratenpartei.ch`)"
+      "traefik.http.routers.memberscivi.tls": "true"
+      "traefik.http.routers.memberscivi.tls.certresolver": "le"
+      "traefik.http.routers.memberscivi.middlewares": "security-headers@file"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-proxy
       - name: net-members-crm
@@ -83,8 +84,8 @@
     image: "wordpress:cli-php8.0"
     name: "members-crm-cron"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-members-crm
     restart_policy: always
@@ -105,8 +106,8 @@
     name: "members-crm-backup"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-members-crm
     volumes:
@@ -126,8 +127,8 @@
     name: "members-crm-civi-backup"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-members-crm
     volumes:

@@ -1,8 +1,9 @@
+---
 - name: Restic Cron dir
   become: true
   file:
     path: /var/srv/restic
-    recurse: yes
+    recurse: true
     state: directory
 
 - name: Restic Cron
@@ -18,8 +19,8 @@
     image: "restic/restic"
     name: "restic-test"
     state: started
-    pull: True
-    auto_remove: yes
+    pull: true
+    auto_remove: true
     command: "snapshots"
     volumes:
       - /var/srv:/data
@@ -39,8 +40,8 @@
     image: "restic/restic"
     name: "restic-init"
     state: started
-    pull: True
-    auto_remove: yes
+    pull: true
+    auto_remove: true
     command: "init"
     volumes:
       - /var/srv:/data
@@ -59,7 +60,7 @@
     image: "restic/restic"
     name: "restic"
     state: started
-    pull: True
+    pull: true
     restart_policy: always
     entrypoint: ""
     command: 'busybox crond -f -l 0 -L /dev/stdout'

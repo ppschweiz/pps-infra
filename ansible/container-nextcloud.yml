@@ -1,9 +1,10 @@
+---
 - name: Create Nextcloud network
   become: true
   docker_network:
     name: net-nextcloud
-    attachable: yes
-    internal: yes
+    attachable: true
+    internal: true
 
 - name: start nextcloud mariadb container
   become: true
@@ -12,8 +13,8 @@
     name: "nextcloud-mysql"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-nextcloud
     ulimits: nofile:4096:32768
@@ -33,8 +34,8 @@
     image: "redis:alpine"
     name: "nextcloud-redis"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-nextcloud
     restart_policy: always
@@ -45,19 +46,19 @@
     image: "nextcloud:27-apache"
     name: "nextcloud"
     labels:
-     "traefik.enable": "true"
-     "traefik.entryPoint": "https"
-     "traefik.http.routers.nextcloud.rule": "Host(`cloud.piratenpartei.ch`)"
-     "traefik.http.routers.nextcloud.tls": "true"
-     "traefik.http.routers.nextcloud.tls.certresolver": "le"
-     "traefik.http.routers.nextcloud.middlewares": "nc"
-     "traefik.http.middlewares.nc.chain.middlewares": "security-headers@file,nextcloud_redirectregex"
-     "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.permanent": "true"
-     "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.regex": "https://(.*)/.well-known/(?:card|cal)dav"
-     "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.replacement": "https://$${1}/remote.php/dav"
+      "traefik.enable": "true"
+      "traefik.entryPoint": "https"
+      "traefik.http.routers.nextcloud.rule": "Host(`cloud.piratenpartei.ch`)"
+      "traefik.http.routers.nextcloud.tls": "true"
+      "traefik.http.routers.nextcloud.tls.certresolver": "le"
+      "traefik.http.routers.nextcloud.middlewares": "nc"
+      "traefik.http.middlewares.nc.chain.middlewares": "security-headers@file,nextcloud_redirectregex"
+      "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.permanent": "true"
+      "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.regex": "https://(.*)/.well-known/(?:card|cal)dav"
+      "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.replacement": "https://$${1}/remote.php/dav"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-proxy
       - name: net-nextcloud
@@ -91,8 +92,8 @@
     name: "nextcloud-cron"
     entrypoint: /cron.sh
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-nextcloud
     restart_policy: always
@@ -125,8 +126,8 @@
     name: "onlyoffice-mariadb"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-nextcloud
     volumes:
@@ -146,8 +147,8 @@
     name: "onlyoffice-rabbitmq"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-nextcloud
     env:
@@ -160,15 +161,15 @@
     image: "onlyoffice/documentserver"
     name: "nextcloud-onlyoffice"
     labels:
-     "traefik.enable": "true"
-     "traefik.entryPoint": "https"
-     "traefik.http.routers.nextcloud-office.rule": "Host(`office.piratenpartei.ch`)"
-     "traefik.http.routers.nextcloud-office.tls": "true"
-     "traefik.http.routers.nextcloud-office.tls.certresolver": "le"
-     "traefik.http.routers.nextcloud-office.middlewares": "security-headers@file"
+      "traefik.enable": "true"
+      "traefik.entryPoint": "https"
+      "traefik.http.routers.nextcloud-office.rule": "Host(`office.piratenpartei.ch`)"
+      "traefik.http.routers.nextcloud-office.tls": "true"
+      "traefik.http.routers.nextcloud-office.tls.certresolver": "le"
+      "traefik.http.routers.nextcloud-office.middlewares": "security-headers@file"
     state: started
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-proxy
       - name: net-nextcloud
@@ -191,8 +192,8 @@
     name: "nextcloud-backup"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-nextcloud
     volumes:
@@ -212,8 +213,8 @@
     name: "onlyoffice-backup"
     state: started
     restart_policy: always
-    pull: True
-    networks_cli_compatible: yes
+    pull: true
+    networks_cli_compatible: true
     networks:
       - name: net-nextcloud
     volumes:
