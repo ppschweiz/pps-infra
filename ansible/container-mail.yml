@@ -1,4 +1,10 @@
 ---
+- name: Create mail network
+  become: true
+  docker_network:
+    name: net-mail
+    attachable: true
+
 - name: Outbound-Mail
   become: true
   docker_container:
@@ -7,6 +13,8 @@
     name: "postfix"
     ports: "25:25"
     state: started
+    networks:
+      - name: net-mail
     volumes:
       - /var/srv/files/mail/queue:/queue:Z
       - /var/srv/files/mail/etc:/overrides:ro,Z

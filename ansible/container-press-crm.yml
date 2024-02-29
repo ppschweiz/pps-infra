@@ -86,6 +86,7 @@
     pull: true
     networks_cli_compatible: true
     networks:
+      - name: net-mail
       - name: net-press-crm
     restart_policy: always
     volumes:
