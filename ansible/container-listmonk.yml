@@ -1,0 +1,74 @@
+---
+- name: Create Listmonk network
+  become: true
+  docker_network:
+    name: net-listmonk
+    attachable: true
+    internal: true
+
+- name: Listmonk auth
+  become: true
+  copy:
+    src: files/listmonk.pwd
+    dest: /var/srv/traefik/config/listmonk.pwd
+    mode: '0644'
+
+- name: start listmonk postgresql container
+  become: true
+  docker_container:
+    image: "postgres:13-alpine"
+    name: "listmonk-postgres"
+    state: started
+    restart_policy: always
+    pull: true
+    networks_cli_compatible: true
+    networks:
+      - name: net-listmonk
+    ulimits: nofile:4096:32768
+    volumes:
+      - /var/srv/postgresql/listmonk:/var/lib/posgresql/data:Z
+    env:
+      POSTGRES_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/listmonk/postgresql/password:value') }}"
+      POSTGRES_USER="listmonk"
+      POSTGRES_DB="listmonk"
+
+- name: start listmonk container
+  become: true
+  docker_container:
+    image: "listmonk/listmonk:latest"
+    name: "listmonk"
+    labels:
+      "traefik.enable": "true"
+      "traefik.entryPoint": "https"
+      "traefik.http.routers.listmonk-public.rule": "Host(`newsletter.piratenpartei.ch`) && PathPrefix(`/subscription/`, `/link/`, `/campaign/`, `/public/`, `/webhooks/service/`)"
+      "traefik.http.routers.listmonk-public.tls.certresolver": "le"
+      "traefik.http.routers.listmonk-public.tls": "true"
+      "traefik.http.routers.listmonk-public.middlewares": "security-headers"
+      "traefik.http.routers.listmonk.rule": "Host(`newsletter.piratenpartei.ch`)"
+      "traefik.http.routers.listmonk.tls.certresolver": "le"
+      "traefik.http.routers.listmonk.tls": "true"
+      "traefik.http.routers.listmonk.middlewares": "listmonk"
+      "traefik.http.middlewares.listmonk.chain.middlewares": "security-headers@file,listmonk_auth"
+      "traefik.http.middlewares.listmonk_auth.digestauth.usersfile": "/config/listmonk.pwd"
+    state: started
+    #   SELECT THE STARTUP COMMAND (INSTALL or UPGRADE).
+    #     - INSTALL will WIPE all data !
+    #     - UPDATE is idempotent.
+    # command: [sh, -c, "yes | ./listmonk --install && ./listmonk"]
+    command: [sh, -c, "yes | ./listmonk --upgrade && ./listmonk"]
+    pull: true
+    networks_cli_compatible: true
+    networks:
+      - name: net-proxy
+      - name: net-listmonk
+    restart_policy: always
+    env:
+      LISTMONK_app__address="0.0.0.0:80"
+      LISTMONK_app__admin_username=""
+      LISTMONK_app__admin_password=""
+      LISTMONK_db__host="listmonk-postgres"
+      LISTMONK_db__port=5432
+      LISTMONK_db__user="listmonk"
+      LISTMONK_db__password="{ lookup('hashi_vault', 'secret=secret/listmonk/postgresql/password:value') }}"
+      LISTMONK_db__database="listmonk"
+      LISTMONK_db__ssl_mode="disable"
