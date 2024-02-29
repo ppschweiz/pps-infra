@@ -6,13 +6,6 @@
     attachable: true
     internal: true
 
-- name: Listmonk config
-  become: true
-  template:
-    src: templates/listmonk.toml.j2
-    dest: /var/srv/files/listmonk/config.toml
-    mode: '0644'
-
 - name: Listmonk auth
   become: true
   copy:
@@ -61,13 +54,21 @@
     #   SELECT THE STARTUP COMMAND (INSTALL or UPGRADE).
     #     - INSTALL will WIPE all data !
     #     - UPDATE is idempotent.
-    # command: [sh, -c, "yes | ./listmonk --install --config /listmonk/config.toml && ./listmonk --config /listmonk/config.toml"]
-    command: [sh, -c, "yes | ./listmonk --upgrade --config /listmonk/config.toml && ./listmonk --config /listmonk/config.toml"]
+    # command: [sh, -c, "yes | ./listmonk --install && ./listmonk"]
+    command: [sh, -c, "yes | ./listmonk --upgrade && ./listmonk"]
     pull: true
     networks_cli_compatible: true
     networks:
       - name: net-proxy
       - name: net-listmonk
     restart_policy: always
-    volumes:
-      - /var/srv/files/listmonk/config.toml:/listmonk/config.toml:z
+    env:
+      LISTMONK_app__address="0.0.0.0:80"
+      LISTMONK_app__admin_username=""
+      LISTMONK_app__admin_password=""
+      LISTMONK_db__host="listmonk-postgres"
+      LISTMONK_db__port=5432
+      LISTMONK_db__user="listmonk"
+      LISTMONK_db__password="{ lookup('hashi_vault', 'secret=secret/listmonk/postgresql/password:value') }}"
+      LISTMONK_db__database="listmonk"
+      LISTMONK_db__ssl_mode="disable"
