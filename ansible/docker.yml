@@ -17,5 +17,6 @@
     - import_tasks: container-backup.yml
     - import_tasks: container-projects.yml
     - import_tasks: container-otrs.yml
+    - import_tasks: container-listmonk.yml
       tags: otrs
     - import_tasks: container-nextcloud.yml
