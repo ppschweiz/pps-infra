@@ -83,3 +83,26 @@
       LISTMONK_db__password="{{ lookup('hashi_vault', 'secret=secret/listmonk/postgresql/password:value') }}"
       LISTMONK_db__database="listmonk"
       LISTMONK_db__ssl_mode="disable"
+
+- name: start backup container for listmonk postgresql
+  become: true
+  docker_container:
+    image: prodrigestivill/postgres-backup-local
+    name: "listmonk-backup"
+    state: started
+    restart_policy: always
+    pull: true
+    networks_cli_compatible: true
+    networks:
+      - name: net-listmonk
+    volumes:
+      - /var/srv/pgsql-backup/listmonk:/backups:Z
+    env:
+      POSTGRES_HOST="listmonk-postgres"
+      POSTGRES_DB="listmonk"
+      POSTGRES_USER="listmonk"
+      POSTGRES_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/listmonk/postgresql/password:value') }}"
+      SCHEDULE=@daily
+      BACKUP_KEEP_DAYS=3
+      BACKUP_KEEP_WEEKS=0
+      BACKUP_KEEP_MONTHS=0
