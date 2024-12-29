@@ -6,14 +6,6 @@
     attachable: true
     internal: true
 
-- name: Listmonk auth
-  become: true
-  copy:
-    src: files/listmonk/htdigest.pwd
-    dest: /var/srv/traefik/config/listmonk.pwd
-    mode: '0644'
-    force: false
-
 - name: Clone Listmonk templates
   become: true
   ansible.builtin.git:
@@ -24,7 +16,7 @@
 - name: start listmonk postgresql container
   become: true
   docker_container:
-    image: "postgres:13-alpine"
+    image: "postgres:17-alpine"
     name: "listmonk-postgres"
     state: started
     restart_policy: always
@@ -39,50 +31,51 @@
       POSTGRES_PASSWORD="{{ lookup('hashi_vault', 'secret=secret/listmonk/postgresql/password:value') }}"
       POSTGRES_USER="listmonk"
       POSTGRES_DB="listmonk"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U listmonk"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
 
 - name: start listmonk container
   become: true
   docker_container:
-    image: "listmonk/listmonk:v3.0.0"
+    image: "listmonk/listmonk:v4.1.0"
     name: "listmonk"
     labels:
       "traefik.enable": "true"
       "traefik.entryPoint": "https"
-      "traefik.http.routers.listmonk-public.rule": "Host(`newsletter.piratenpartei.ch`) && (PathPrefix(`/subscription/`, `/archive`, `/link/`, `/campaign/`, `/public/`, `/uploads/`, `/webhooks/service/`) || Path(`/`))"
-      "traefik.http.routers.listmonk-public.tls.certresolver": "le"
-      "traefik.http.routers.listmonk-public.tls": "true"
-      "traefik.http.routers.listmonk-public.middlewares": "security-headers@file"
       "traefik.http.routers.listmonk.rule": "Host(`newsletter.piratenpartei.ch`)"
       "traefik.http.routers.listmonk.tls.certresolver": "le"
       "traefik.http.routers.listmonk.tls": "true"
-      "traefik.http.routers.listmonk.middlewares": "listmonk"
-      "traefik.http.middlewares.listmonk.chain.middlewares": "security-headers@file,listmonk_auth"
-      "traefik.http.middlewares.listmonk_auth.digestauth.usersfile": "/config/listmonk.pwd"
+      "traefik.http.routers.listmonk.middlewares": "security-headers@file"
     state: started
-    #   SELECT THE STARTUP COMMAND (INSTALL or UPGRADE).
-    #     - INSTALL will WIPE all data !
-    #     - UPDATE is idempotent.
-    # command: [sh, -c, "yes | ./listmonk --install && ./listmonk --static-dir=/listmonk/static"]
-    command: [sh, -c, "yes | ./listmonk --upgrade && ./listmonk --static-dir=/listmonk/static"]
+    command: [sh, -c, "./listmonk --install --idempotent --yes --config '' && ./listmonk --upgrade --yes --config '' && ./listmonk --config '' --static-dir=/listmonk/static"]
+                                                              # --config (file) param is set to empty so that listmonk only uses the env vars (below) for config.
+                                                              # --install --idempotent ensures that DB installation happens only once on an empty DB, on the first ever start.
+                                                              # --upgrade automatically runs any DB migrations when a new image is pulled.
     pull: true
     networks_cli_compatible: true
     networks:
       - name: net-proxy
       - name: net-listmonk
+    hostname: newsletter.piratenpartei.ch
     restart_policy: always
     volumes:
       - /var/srv/files/listmonk/uploads:/listmonk/uploads:z
       - /var/srv/files/listmonk/static:/listmonk/static:ro,z
     env:
       LISTMONK_app__address="0.0.0.0:9000"
-      LISTMONK_app__admin_username=""
-      LISTMONK_app__admin_password=""
       LISTMONK_db__host="listmonk-postgres"
       LISTMONK_db__port=5432
       LISTMONK_db__user="listmonk"
       LISTMONK_db__password="{{ lookup('hashi_vault', 'secret=secret/listmonk/postgresql/password:value') }}"
       LISTMONK_db__database="listmonk"
       LISTMONK_db__ssl_mode="disable"
+      LISTMONK_db__max_open=25
+      LISTMONK_db__max_idle=25
+      LISTMONK_db__max_lifetime="300s"
+      TZ="Europe/Zurich"
 
 - name: start backup container for listmonk postgresql
   become: true
