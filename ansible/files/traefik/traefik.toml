@@ -33,8 +33,5 @@
   [certificatesResolvers.le.acme.httpChallenge]
     entryPoint = "http"
 
-[experimental]
-  http3 = true
-
 [api]
   dashboard = false
