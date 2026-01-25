@@ -9,7 +9,6 @@
         enabled: true
         name: docker.service
     - import_tasks: container-traefik.yml
-    - import_tasks: container-api.yml
     - import_tasks: container-press-crm.yml
     - import_tasks: container-members-crm.yml
     - import_tasks: container-mumble.yml
