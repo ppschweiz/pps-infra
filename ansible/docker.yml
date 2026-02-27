@@ -12,7 +12,6 @@
     - import_tasks: container-press-crm.yml
     - import_tasks: container-members-crm.yml
     - import_tasks: container-mumble.yml
-    - import_tasks: container-mail.yml
     - import_tasks: container-backup.yml
     - import_tasks: container-projects.yml
     - import_tasks: container-otrs.yml
