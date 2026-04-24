@@ -40,7 +40,7 @@
 - name: start listmonk container
   become: true
   docker_container:
-    image: "listmonk/listmonk:v6.0.0"
+    image: "listmonk/listmonk:v6.1.0"
     name: "listmonk"
     labels:
       "traefik.enable": "true"
