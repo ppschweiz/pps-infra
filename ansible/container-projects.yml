@@ -65,6 +65,9 @@
       REDMINE_DB_USERNAME="projects"
       REDMINE_PLUGINS_MIGRATE=true
       SECRET_KEY_BASE="{{ lookup('hashi_vault', 'secret=secret/projects/rails/secret:value') }}"
+      WEB_CONCURRENCY=2
+      RAILS_MAX_THREADS=5
+      PUMA_PRELOAD_APP=true
 
 - name: start backup container for first mariadb container
   become: true
