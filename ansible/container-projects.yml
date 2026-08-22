@@ -57,7 +57,7 @@
     volumes:
       - /var/srv/files/projects/configuration.yml:/usr/src/redmine/config/configuration.yml:ro,Z
       - /var/srv/files/projects/files:/usr/src/redmine/files:Z
-      - /var/srv/files/projects/themes/PurpleMine2:/usr/src/redmine/public/themes/PurpleMine2:ro,Z
+      - /var/srv/files/projects/themes/opale:/usr/src/redmine/public/themes/opale:ro,Z
     env:
       REDMINE_DB_DATABASE="projects"
       REDMINE_DB_MYSQL="projects-mariadb"
