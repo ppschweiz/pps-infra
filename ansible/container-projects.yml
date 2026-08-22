@@ -35,6 +35,32 @@
     dest: /var/srv/files/projects/configuration.yml
     mode: '0644'
 
+- name: start anubis container
+  become: true
+  docker_container:
+    image: ghcr.io/techarohq/anubis
+    name: "anubis"
+    restart_policy: always
+    labels:
+      "traefik.enable": "true"
+      "traefik.entryPoint": "https"
+      "traefik.http.routers.anubis.rule": "Host(`projects.piratenpartei.ch`)"
+      "traefik.http.routers.anubis.tls": "true"
+      "traefik.http.routers.anubis.tls.certresolver": "le"
+      "traefik.http.routers.anubis.middlewares": "security-headers@file"
+      "traefik.http.services.anubis.loadbalancer.server.port": "8080"
+    state: started
+    pull: true
+    networks_cli_compatible: true
+    networks:
+      - name: net-proxy
+      - name: net-redmine
+    env:
+      BIND: "0.0.0.0:8080"
+      TARGET: "http://projects:3000"
+      DIFFICULTY: "7"
+      SERVE_ROBOTS_TXT: "true"
+
 - name: start projects/redmine container
   become: true
   docker_container:
@@ -42,12 +68,7 @@
     name: "projects"
     restart_policy: always
     labels:
-      "traefik.enable": "true"
-      "traefik.entryPoint": "https"
-      "traefik.http.routers.redmine.rule": "Host(`projects.piratenpartei.ch`)"
-      "traefik.http.routers.redmine.tls": "true"
-      "traefik.http.routers.redmine.tls.certresolver": "le"
-      "traefik.http.routers.redmine.middlewares": "security-headers@file"
+      "traefik.enable": "false"
     state: started
     pull: true
     networks_cli_compatible: true
