@@ -22,7 +22,7 @@
       authorized_key:
         key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7WCAUmx3yYJJeqW/79bDD7tdZKF5XSZM256zraP831 pat'
         user: core
- - name: deploy public key baetscher
+    - name: deploy public key baetscher
       authorized_key:
         key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBbBGeHOA0AM+st3JXSOTG/l7bZ6a7CsaVvIUBOAxNHA'
         user: core
