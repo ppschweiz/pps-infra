@@ -18,3 +18,7 @@
       authorized_key:
         key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILUJk/Y0iv5hB71CCOfDNHtEF+JFnr5BgBl2HDVx4NOb root@24h-xu'
         user: core
+    - name: deploy public key pat
+      authorized_key:
+        key: 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIH7WCAUmx3yYJJeqW/79bDD7tdZKF5XSZM256zraP831 pat'
+        user: core
